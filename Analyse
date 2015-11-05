@@ -1,0 +1,36 @@
+Fonction recvMsg () à diviser en deux
+	1/ recvMsg
+	2/ getNbMsg
+
+Tests:
+
+	initMsg :	- service déja lancé
+				- erreur d'init
+	
+	aboMsg : 	- service non lancé ( SNM )
+				- déja abonné
+				- nombre max d'abo atteint
+				- Erreur Technique (ET)
+
+	sendMsg :	- SNL
+				- expéditeur non abo
+				- identifiant non existant
+				- ET
+
+	recvMsg :	- SNL
+				- consultant non abo
+				- si expediteur plus abo -> attention!
+				- ET
+
+	getNbMsg : 	- SNL
+				- consultant non abo
+				- ET 
+
+	desaboMg : 	- SNL
+				- désabo réabo pas accès aux ancien msg
+
+	finMsg :	- SNL
+				- taches encore abo
+				- ET
+
+	
