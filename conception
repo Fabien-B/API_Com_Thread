@@ -1,0 +1,40 @@
+Le gestionnaire à acces à un tableau de pointeur sur struct messagerie de taille nb abo max
+
+Struct Messagerie : ( id, pointeur sur premier message, <nb message>)
+
+		pour trouver un utilisateur parcours de toute la liste
+	
+		amélioration possible, ranger la liste par numéro d'id croissant puis recherche
+		dichotomique
+
+structure message : ( contenu, id expediteur, p→ suivant , date)
+
+		en liste chaînée type FIFO : comme les messages ne sont pas conservé apres avoir étés lu 
+		
+		avantage du fifo lecture chronologique et nb mess non limité
+ 
+
+structure communication : ( code operation, operande)
+
+
+
+Déroulement d'une action :
+
+
+	 
+Client :	1. Écriture dans les registres
+		2. Envoi signal
+		3. Wait
+
+Gestionnaire :	4. Lecture registres
+		5. Action correspondante
+		6. Écriture dans les registres
+		7. Envoi signal
+		8. Wait
+
+Client :	9. Lecture registres
+		10. Action correspondante
+		11. Retour
+		
+
+
