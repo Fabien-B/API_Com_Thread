@@ -1,0 +1,6 @@
+#ifndef API_COM_H_INCLUDED
+#define API_COM_H_INCLUDED
+
+
+
+#endif // API_COM_H_INCLUDED
