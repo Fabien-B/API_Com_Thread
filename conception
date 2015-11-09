@@ -14,7 +14,7 @@ structure message : ( contenu, id expediteur, p→ suivant , date)
 		avantage du fifo lecture chronologique et nb mess non limité
  
 
-structure communication : ( code operation, operande)
+structure communication : ( code operation, operande, * mutex, id_client)
 
 
 
