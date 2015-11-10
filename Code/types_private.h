@@ -6,14 +6,14 @@ typedef struct message {
     void * contenu;
     int expid;
     struct timeval *tv;     //to use with gettimeofday
-    message* next;
+    struct message * next;
 } message;
 
 
 typedef struct messagerie {
     int id;
-    message * first_msg;
-    # int nb_msg;
+    struct message * first_msg;
+    // int nb_msg;
 } messagerie;
 
 

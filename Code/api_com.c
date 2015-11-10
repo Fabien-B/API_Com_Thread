@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include "types_private.h"
 #include "api_com.h"
 
 pthread_mutex_t * mutex_abo;
 communication * com_abo;
+pthread_t _thread_gest;
 
 void * gestionnaire(void * arg)
 {
@@ -11,22 +13,18 @@ void * gestionnaire(void * arg)
 
 int initMsg()
 {
-    pthread_t thread_gest;
-    if (pthread_create(&idThread1, NULL, foncThread1, NULL)!=0){
+
+    if (pthread_create(&_thread_gest, NULL, gestionnaire, NULL)!=0){
         printf("erreur creation thread1\n");
-        exit(1);
+        return TECH_ERROR;
     }
+    return SUCCESS;
 }
 
+int finMsg()
+{
 
-
-
-
-
-
-
-
-
+}
 
 
 
