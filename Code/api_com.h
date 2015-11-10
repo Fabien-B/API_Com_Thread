@@ -6,8 +6,8 @@ typedef struct communication {
     int client_id;
     int operation;
     void * contenu;
-    pthread_mutex_t * mutex;
-    pthread_cond_t * signal_gestionnaire;
+    pthread_mutex_t mutex;
+    pthread_cond_t signal_gestionnaire;
 
 } communication;
 

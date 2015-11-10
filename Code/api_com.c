@@ -1,9 +1,9 @@
 #include "types_private.h"
 #include "api_com.h"
 
-pthread_mutex_t * _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
 communication * _com_abo;
-int _abo_traité = 1;
+int _abo_traite = 1;
 
 
 void * gestionnaire(void * arg)
@@ -63,5 +63,27 @@ int initMsg()
 
 int aboMsg(communication * my_com)
 {
+	
+	&(my_com.signal_gestionnaire) = PTHREAD_COND_INITIALIZER;
+	&(my_com.mutex) = PTHREAD_MUTEX_INITIALIZER;
+	
+	
+	int abo_possible = 0;
+	while(abo_possible == 0)						// Si l'ancienne demande d'abonnement n'est pas prise en compte ont attend
+		{
+			pthread_mutex_lock(&_mutex_abo);
+			if(_abo_traite == 1)
+			{
+				abo_possible = 1;
+				_abo_traite = 0;
+				//abonnement
+			}
+			
+			pthread_mutex_unlock(&_mutex_abo);
+			if(!abo_possible)
+			{
+				usleep(1000);
+			}
+		}
 	
 }
