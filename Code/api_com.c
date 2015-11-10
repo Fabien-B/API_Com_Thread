@@ -58,3 +58,8 @@ int initMsg()
 
 
 
+
+int aboMsg(communication *)
+{
+	
+}

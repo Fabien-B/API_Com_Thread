@@ -2,7 +2,7 @@
 #define API_COM_H_INCLUDED
 #include <pthread.h>
 
-typedef communication {
+typedef struct communication {
     int client_id;
     int operation;
     void * contenu;

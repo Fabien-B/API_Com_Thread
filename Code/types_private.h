@@ -2,7 +2,7 @@
 #define TYPES_PRIVATE_H_INCLUDED
 #define NB_ABO_MAX 10
 
-typedef message {
+typedef struct message {
     void * contenu;
     int expid;
     struct timeval *tv;     //to use with gettimeofday
