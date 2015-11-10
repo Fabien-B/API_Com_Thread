@@ -8,6 +8,7 @@ pthread_cond_t _fin_signal = PTHREAD_COND_INITIALIZER;
 communication * _com_abo;
 pthread_t _thread_gest;
 int demande_arret = 0;
+int _abo_traité = 1;
 
 void * gestionnaire(void * arg)
 {
@@ -69,7 +70,7 @@ int finMsg()
 
 
 
-int aboMsg(communication *)
+int aboMsg(communication * my_com)
 {
 	
 }
