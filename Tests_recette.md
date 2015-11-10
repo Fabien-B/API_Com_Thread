@@ -19,10 +19,10 @@ Codes d'erreurs :
 + 3 : Service non lancé	(tous sauf initMsg)
 + 4 : Id déjà utilisé (aboMsg)
 + 5 : Nb max d'abonnés atteint (aboMsg)
-+ 6 : Erreur technique (tous)
-+ 7 : Non abonné (sendMsg, RecvMsg, getNbMsg, desaboMsg)
-+ 8 : Id inconnu (SendMsg)
-+ 9 : Service toujours utilisé (finMsg)
++ 6 : Non abonné (sendMsg, RecvMsg, getNbMsg, desaboMsg)
++ 7 : Id inconnu (SendMsg)
++ 8 : Service toujours utilisé (finMsg)
++ 9 : Erreur technique (tous)
 
 -----------------
 

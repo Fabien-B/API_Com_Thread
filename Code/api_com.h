@@ -19,5 +19,17 @@ int getNbMsg(int my_id);
 int desaboMsg(int my_id);
 int finMsg();
 
+typedef enum com_errors {
+    SUCCESS,
+    ALREADY_LAUNCH,
+    INIT_ERROR,
+    NO_SERVICE,
+    ID_IN_USE,
+    MAX_ABO,
+    NO_ABO,
+    ID_UNKNOWN,
+    SERVICE_USED,
+    TECH_ERROR
+} com_errors;
 
 #endif // API_COM_H_INCLUDED
