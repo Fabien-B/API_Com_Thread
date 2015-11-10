@@ -1,8 +1,10 @@
 #include "types_private.h"
 #include "api_com.h"
 
-pthread_mutex_t * mutex_abo;
-communication * com_abo;
+pthread_mutex_t * _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
+communication * _com_abo;
+int _abo_traité = 1;
+
 
 void * gestionnaire(void * arg)
 {
@@ -59,7 +61,7 @@ int initMsg()
 
 
 
-int aboMsg(communication *)
+int aboMsg(communication * my_com)
 {
 	
 }
