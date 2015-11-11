@@ -90,10 +90,14 @@ int initMsg()
 
 int finMsg()
 {
+    if(_thread_gest==NULL)  //thread non lancé, pas besoinde l'arreter.
+    {
+        return NO_SERVICE;
+    }
+
     ///Creation struct communication et remplissage des champs.
     communication my_com;
     my_com.client_id = -1;
-        printf("%d\n",my_com.client_id);
     pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
     my_com.signal_gestionnaire = &cond;
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -116,7 +120,7 @@ int finMsg()
             _com_abo = &my_com; //mise à dispo de ma struct communication.
 
             pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-
+            pthread_mutex_unlock(&_mutex_abo);
             while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
             {
                 pthread_cond_wait(my_com.signal_gestionnaire, my_com.mutex);   //il communique avec les objets que je lui ai spécifiés.
@@ -140,6 +144,12 @@ int finMsg()
 
 int aboMsg(communication * my_com)
 {
+
+    if(_thread_gest==NULL)
+    {
+        return NO_SERVICE;
+    }
+
     pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
     my_com->signal_gestionnaire = &cond;
 	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -148,11 +158,9 @@ int aboMsg(communication * my_com)
     my_com->retour = -1;
 
 	int abo_ok = 0;
-
 	while(abo_ok == 0)						// Si l'ancienne demande d'abonnement n'est pas prise en compte ont attend
     {
         pthread_mutex_lock(&_mutex_abo);
-
         if(_abo_traite == 1)    //pas d'abonnement en cours, on y va !
         {
             abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
@@ -162,6 +170,7 @@ int aboMsg(communication * my_com)
             _com_abo = my_com; //mise à dispo de ma struct communication.
 
             pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+            pthread_mutex_unlock(&_mutex_abo);      //et libération mutex
 
             while(my_com->retour == -1)              //attente d'un signal venant du gestionnaire
             {
