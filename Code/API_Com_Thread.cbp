@@ -31,11 +31,20 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="api_com.c">
+		<Unit filename="abo_handeling.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="api_com.h" />
+		<Unit filename="gestionnaire.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="init_end_service.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="msg_manager.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="types_private.h" />
