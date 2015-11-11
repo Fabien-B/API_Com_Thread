@@ -70,7 +70,7 @@ void * gestionnaire(void * arg)
 
 int initMsg()
 {
-    if(_thread_gest) // != NULL : déja lancé
+    if(_thread_gest != NULL) // != NULL : déja lancé
     {
         return ALREADY_LAUNCH;
     }
