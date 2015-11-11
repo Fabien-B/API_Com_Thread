@@ -1,6 +1,7 @@
 #ifndef TYPES_PRIVATE_H_INCLUDED
 #define TYPES_PRIVATE_H_INCLUDED
 #define NB_ABO_MAX 10
+#include "api_com.h"
 
 typedef struct message {
     void * contenu;
@@ -11,8 +12,8 @@ typedef struct message {
 
 
 typedef struct messagerie {
-    int id;
-    struct message * first_msg;
+    communication * client;
+    message * first_msg;
     // int nb_msg;
 } messagerie;
 
