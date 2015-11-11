@@ -5,17 +5,65 @@
 
 pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;
-pthread_cond_t _fin_signal = PTHREAD_COND_INITIALIZER;
 communication * _com_abo;
 int demande_arret = 0;
-int _abo_traité = 1;
 pthread_t * _thread_gest = NULL;    //à NULL si le gestionnaire n'est pas lancé
 int _abo_traite = 1;
 
 void * gestionnaire(void * arg)
 {
+    int nb_messageries = 0;
+    messagerie tab[NB_ABO_MAX];     //crée les messageries
 
+    while(1)
+    {
+        //pthread_mutex_lock(&_mutex_abo);
+        pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal
+
+        if(!_abo_traite)    //un abonnement à gérer !
+        {
+            //pthread_mutex_lock(&_mutex_abo);  // fait automatiquement à la sortie du wait.
+            int flag = SUCCESS;     //succes by default, modified if there is an error.
+
+            if(nb_messageries<NB_ABO_MAX)
+            {
+                int i;
+                for(i=0;i<nb_messageries;i++) //parcours liste abo pour vérif id demandé.
+                {
+                    if(tab[i].client->client_id == _com_abo->client_id)
+                    {
+                        flag = ID_IN_USE;
+                    }
+                }
+
+                tab[nb_messageries].client = _com_abo;  //tout ok, stockage dans le tableau
+                tab[nb_messageries].first_msg = NULL;   //pas de msg au début
+                nb_messageries ++;  //un abo de plus.
+            }
+            else
+            {
+                flag = MAX_ABO;
+            }
+
+            pthread_mutex_lock(_com_abo->mutex);  //lock mutex client
+            _com_abo->retour = flag;       //met la valeur de retour à success.
+            pthread_cond_signal(_com_abo->signal_gestionnaire);   //réveille le client.
+            pthread_mutex_unlock(_com_abo->mutex);    //unlock mutex client
+
+            _abo_traite = 1;    //abo traitée, on peut en faire d'autre !
+            pthread_mutex_unlock(&_mutex_abo); //on rend la main.
+        }
+
+        int i;
+        for(i=0;i<nb_messageries;i++) //parcours liste abo pour vérif id demandé.
+        {
+            //ACTIONS (switch case)!
+        }
+    }
+    pthread_exit(0);
 }
+
+
 
 int initMsg()
 {
