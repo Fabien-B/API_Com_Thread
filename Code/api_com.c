@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include "types_private.h"
 #include "api_com.h"
-
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <time.h>
 
 pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;
