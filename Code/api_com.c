@@ -7,9 +7,9 @@ pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;
 pthread_cond_t _fin_signal = PTHREAD_COND_INITIALIZER;
 communication * _com_abo;
-pthread_t _thread_gest;
 int demande_arret = 0;
 int _abo_traité = 1;
+pthread_t * _thread_gest = NULL;    //à NULL si le gestionnaire n'est pas lancé
 int _abo_traite = 1;
 
 void * gestionnaire(void * arg)
@@ -19,10 +19,17 @@ void * gestionnaire(void * arg)
 
 int initMsg()
 {
+    if(_thread_gest) // != NULL : déja lancé
+    {
+        return ALREADY_LAUNCH;
+    }
 
-    if (pthread_create(&_thread_gest, NULL, gestionnaire, NULL)!=0){
-        printf("erreur creation thread1\n");
-        return TECH_ERROR;
+    pthread_t thread_gestionnaire;          //on déclare un pthread_t
+    _thread_gest = &thread_gestionnaire;    //et on le donne a notre variable globale
+
+    if (pthread_create(_thread_gest, NULL, gestionnaire, NULL)!=0){
+        printf("erreur creation thread gestionnaire\n");
+        return INIT_ERROR; //TECH_ERROR
     }
     return SUCCESS;
 }
