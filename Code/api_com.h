@@ -32,4 +32,15 @@ typedef enum com_errors {
     TECH_ERROR
 } com_errors;
 
+typedef enum operations {
+    ABO,
+    SENDMSG,
+    RECVMSG,
+    GETNBMSG,
+    DESABO,
+    ISABO,
+    GETNBABO,
+    CLOSESERVICE
+} operations;
+
 #endif // API_COM_H_INCLUDED
