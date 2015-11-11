@@ -11,7 +11,6 @@
 pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;
 communication * _com_abo;
-int demande_arret = 0;
 pthread_t * _thread_gest = NULL;    //à NULL si le gestionnaire n'est pas lancé
 int _abo_traite = 1;
 
@@ -87,19 +86,56 @@ int initMsg()
     return SUCCESS;
 }
 
+
+
 int finMsg()
 {
-    pthread_mutex_lock(&_mutex_abo);        //lock
-    demande_arret = 1;                      //demande d'arret
-    pthread_cond_signal(&_client_signal);   //reveil le gestionnaire
-    pthread_mutex_unlock(&_mutex_abo);      //unlock
+    ///Creation struct communication et remplissage des champs.
+    communication my_com;
+    my_com.client_id = -1;
+        printf("%d\n",my_com.client_id);
+    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+    my_com.signal_gestionnaire = &cond;
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+    my_com.mutex = &mutex;
+    my_com.operation = CLOSESERVICE;
+    my_com.retour = -1;
 
-    while(demande_arret)    //le gestionnaire passe cette variable à 0 quand il a pris la demande en compte
+	int abo_ok = 0;
+
+	while(abo_ok == 0)						// Si l'ancienne demande d'abonnement n'est pas prise en compte ont attend
     {
-        pthread_cond_wait(&_fin_signal, &_mutex_abo);   //on attend le signal de fin
+        pthread_mutex_lock(&_mutex_abo);
+
+        if(_abo_traite == 1)    //pas d'abonnement en cours, on y va !
+        {
+            abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
+            _abo_traite = 0;    //indique un abonnement en cours. le gestionnaire le remettra a 1.
+
+            //abonnement
+            _com_abo = &my_com; //mise à dispo de ma struct communication.
+
+            pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+
+            while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
+            {
+                pthread_cond_wait(my_com.signal_gestionnaire, my_com.mutex);   //il communique avec les objets que je lui ai spécifiés.
+            }
+
+            return my_com.retour;                   //retourne le code renvoyé par le gestionnaire
+
+        }
+
+        pthread_mutex_unlock(&_mutex_abo);
+        if(!abo_ok)
+        {
+            usleep(1000);
+        }
     }
 
+    return TECH_ERROR;
 }
+
 
 
 int aboMsg(communication * my_com)
