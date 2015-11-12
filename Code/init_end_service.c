@@ -62,15 +62,19 @@ int finMsg()
 
             //abonnement
             _com_abo = &my_com; //mise à dispo de ma struct communication.
-
+printf("stop\n");
+sleep(2);
             pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
             pthread_mutex_unlock(&_mutex_abo);
-            while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
+            //int ret = my_com.retour;
+            while(_com_abo->retour == -1)              //attente d'un signal venant du gestionnaire
             {
-                pthread_cond_wait(my_com.signal_gestionnaire, my_com.mutex);   //il communique avec les objets que je lui ai spécifiés.
+                pthread_cond_wait(_com_abo->signal_gestionnaire, _com_abo->mutex);   //il communique avec les objets que je lui ai spécifiés.
             }
 
-            return my_com.retour;                   //retourne le code renvoyé par le gestionnaire
+            pthread_mutex_unlock(&_mutex_abo);
+            int ret = _com_abo->retour;
+            return ret;                   //retourne le code renvoyé par le gestionnaire
 
         }
 
