@@ -3,17 +3,15 @@
 #define NB_ABO_MAX 10
 #include "api_com.h"
 
-typedef struct message {
-    void * contenu;
-    int expid;
-    struct timeval *tv;     //to use with gettimeofday
-    struct message * next;
-} message;
+typedef struct lettre {
+    message mail;
+    struct lettre * next;
+} lettre;
 
 
 typedef struct messagerie {
     communication * client;
-    message * first_msg;
+    lettre * first_letter;
     // int nb_msg;
 } messagerie;
 
@@ -25,4 +23,5 @@ extern pthread_t * _thread_gest;                            //est à NULL si le 
 extern int _abo_traite;
 
 void * gestionnaire(void * arg);
+int handleSend(int sender_id, void * contenu);
 #endif // TYPES_PRIVATE_H_INCLUDED

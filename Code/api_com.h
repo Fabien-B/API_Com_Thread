@@ -6,18 +6,25 @@ typedef struct communication {
     int client_id;
     int operation;
     int retour;
+    int dest_id;
     void * contenu;
     pthread_mutex_t * mutex;
     pthread_cond_t * signal_gestionnaire;
 
 } communication;
 
+typedef struct message {
+    void * contenu;
+    int expid;
+    struct timeval *tv;     //to use with gettimeofday
+} message;
+
 int initMsg();
 int aboMsg(communication *);
-int sendMsg(int my_id, int dest);
-int recvMsg(int my_id);
-int getNbMsg(int my_id);
-int desaboMsg(int my_id);
+int sendMsg(communication * mycom, int id_dest, void * contenu);
+int recvMsg(communication *, message **msg);
+int getNbMsg(communication *);
+int desaboMsg(communication *);
 int finMsg();
 
 typedef enum com_errors {
@@ -29,12 +36,14 @@ typedef enum com_errors {
     MAX_ABO,
     NO_ABO,
     ID_UNKNOWN,
+    NO_MSG,
     SERVICE_USED,
     TECH_ERROR
 } com_errors;
 
+//l'abonnement est une opération spéciale, elle ne passe pas par le meme moyen.
 typedef enum operations {
-    ABO,
+    NO_OP,
     SENDMSG,
     RECVMSG,
     GETNBMSG,
