@@ -40,16 +40,13 @@ int aboMsg(communication * my_com)
             {
                 pthread_cond_wait(my_com->signal_gestionnaire, my_com->mutex);   //il communique avec les objets que je lui ai spécifiés.
             }
+            int ret = my_com->retour;
             pthread_mutex_unlock(my_com->mutex);
-            return my_com->retour;                   //retourne le code renvoyé par le gestionnaire
-
+            return ret;                   //retourne le code renvoyé par le gestionnaire
         }
 
         pthread_mutex_unlock(&_mutex_abo);
-        if(!abo_ok)
-        {
-            usleep(1000);
-        }
+        usleep(1000);
     }
 
     return TECH_ERROR;
