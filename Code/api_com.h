@@ -28,29 +28,30 @@ int desaboMsg(communication *);
 int finMsg();
 
 typedef enum com_errors {
-    SUCCESS,
-    ALREADY_LAUNCH,
-    INIT_ERROR,
-    NO_SERVICE,
-    ID_IN_USE,
-    MAX_ABO,
-    NO_ABO,
-    ID_UNKNOWN,
-    NO_MSG,
-    SERVICE_USED,
-    TECH_ERROR
+    SUCCESS,                //0
+    ALREADY_LAUNCH,         //1
+    INIT_ERROR,             //2
+    NO_SERVICE,             //3
+    ID_IN_USE,              //4
+    MAX_ABO,                //5
+    NO_ABO,                 //6
+    ID_UNKNOWN,             //7
+    NO_MSG,                 //8
+    SERVICE_USED,           //9
+    TECH_ERROR,             //10
+    CLOSESERVICE_FORCED     //11
 } com_errors;
 
 //l'abonnement est une opération spéciale, elle ne passe pas par le meme moyen.
 typedef enum operations {
-    NO_OP,
-    SENDMSG,
-    RECVMSG,
-    GETNBMSG,
-    DESABO,
-    ISABO,
-    GETNBABO,
-    CLOSESERVICE
+    NO_OP,              //0
+    SENDMSG,            //1
+    RECVMSG,            //2
+    GETNBMSG,           //3
+    DESABO,             //4
+    ISABO,              //5
+    GETNBABO,           //6
+    CLOSESERVICE        //7
 } operations;
 
 #endif // API_COM_H_INCLUDED
