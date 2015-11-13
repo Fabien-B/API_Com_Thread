@@ -35,6 +35,12 @@ Gestionnaire :	4. Lecture registres
 Client :	9. Lecture registres
 		10. Action correspondante
 		11. Retour
+
+
+Amélioration possible : 
+		Tester si ont peut encore abonner quelqu'un ou pas avec un sémaphore
+		idem pour les fct blocantes
+
 		
 
 
