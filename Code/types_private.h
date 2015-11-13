@@ -21,6 +21,7 @@ extern pthread_cond_t _client_signal;   //condition pour sortir le gestionnaire 
 extern communication * _com_abo;                                   //utilisé à l'abonnement
 extern pthread_t * _thread_gest;                            //est à NULL si le gestionnaire n'est pas lancé
 extern int _abo_traite;
+extern int fin;
 
 void * gestionnaire(void * arg);
 int handleSend(int sender_id, void * contenu);
