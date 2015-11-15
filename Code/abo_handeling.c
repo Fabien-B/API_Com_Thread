@@ -6,7 +6,7 @@
 #include "api_com.h"
 
 
-int aboMsg(communication * my_com)
+int aboMsg(communication * my_com, int id)
 {
 
     if(_thread_gest==NULL)
@@ -14,10 +14,16 @@ int aboMsg(communication * my_com)
         return NO_SERVICE;
     }
 
-    pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
-    my_com->signal_gestionnaire = &cond;
-	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-    my_com->mutex = &mutex;
+
+    my_com->signal_gestionnaire = malloc(sizeof(pthread_cond_t));
+    if (pthread_cond_init(my_com->signal_gestionnaire, NULL) != 0) {
+        return TECH_ERROR;
+    }
+    my_com->mutex = malloc(sizeof(pthread_mutex_t));
+    if (pthread_mutex_init(my_com->mutex,NULL) != 0) {
+        return TECH_ERROR;
+    }
+
     my_com->operation = NO_OP;
     my_com->retour = -1;
 
@@ -74,5 +80,6 @@ int desaboMsg(communication * mycom)
     }
 
     mycom->operation = NO_OP;
+    pthread_mutex_destroy(mycom->mutex);
     return mycom->retour;
 }
