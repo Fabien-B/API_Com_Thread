@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <sys/time.h>
 
 pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;     //mutex utilisé pour _com_abo, _abo_traite ( et _client_signal ?)
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;   //condition pour sortir le gestionnaire de sa torpeur
@@ -78,7 +79,7 @@ void * gestionnaire(void * arg)
                         ret = handleSend(tab, nb_messageries, i);
                         break;
                     case RECVMSG:
-                        ret = handleRcv(tab[i]);
+                        ret = handleRcv(&tab[i]);
                         break;
                     case CLOSESERVICE:
                         ret = close_service(0);
@@ -107,6 +108,7 @@ void * gestionnaire(void * arg)
 
 int close_service(int flag)
 {
+    ///TODO
     //frees....
 
     return 789;

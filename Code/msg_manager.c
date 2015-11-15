@@ -44,7 +44,6 @@ int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
     int code_retour = mycom->retour;
     mycom->operation = NO_OP;
     pthread_mutex_unlock(mycom->mutex);
-    printf("fin send\n");
     return code_retour;
 }
 
@@ -59,21 +58,88 @@ int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur point
     mycom->operation = RECVMSG;
     mycom->retour = -1;
 
-    pthread_mutex_lock(&_mutex_abo);
+    pthread_mutex_lock(mycom->mutex);
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-    pthread_mutex_unlock(&_mutex_abo);
-
     while(mycom->retour == -1)
     {
         pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);
     }
 
-    if(mycom->retour == SUCCESS)
+    int code_retour = mycom->retour;
+    mycom->operation = NO_OP;
+
+    if(code_retour == SUCCESS)
     {
         *msg = mycom->contenu;  //pointeur sur message vaut le pointeur retourné par le gestionnaire
     }
 
-    mycom->operation = NO_OP;
-    return mycom->retour;
+    pthread_mutex_unlock(mycom->mutex);
+    return code_retour;
+}
 
+
+
+int handleSend(messagerie * tab, int nb_messageries, int id_sender)
+{
+    int i;
+    int receiver = -1;
+    for(i=0;i<nb_messageries;i++)       //recherche du destinataire
+    {
+        if(tab[i].client->client_id == tab[id_sender].client->dest_id)
+        {
+            receiver = i;
+        }
+    }
+
+    if(receiver != -1)  //on a trouvé le destinataire
+    {
+        message * mess_to_send = tab[id_sender].client->contenu;    //récupération du message
+        if(gettimeofday(&mess_to_send->tv, &mess_to_send->tz))    //datage du message
+        {
+                return TECH_ERROR;
+        }
+
+        lettre * new_letter = NULL;
+        new_letter = malloc(sizeof(lettre));
+        if(new_letter == NULL)          //vérification de la bonne marche du malloc
+        {
+            return TECH_ERROR;
+        }
+        new_letter->mail = mess_to_send;    //mémorisation du message
+        new_letter->next = NULL;
+
+
+        if(tab[receiver].first_letter == NULL)
+        {
+            tab[receiver].first_letter = new_letter;
+            return SUCCESS;
+        }
+
+        lettre * current_letter = tab[receiver].first_letter;
+        while(current_letter->next != NULL)   //recherche pointeur lettre suivant la dernière
+        {
+            current_letter = current_letter->next;
+        }
+        current_letter->next = new_letter;
+        return SUCCESS;
+    }
+    else    //destinataire inexistant
+    {
+        return ID_UNKNOWN;
+    }
+}
+
+
+int handleRcv(messagerie * mess)
+{
+    if(mess->first_letter == NULL){
+        return NO_MSG;
+    }
+
+    mess->client->contenu = mess->first_letter->mail;
+
+    lettre * to_destroy = mess->first_letter;
+    mess->first_letter = mess->first_letter->next;  //mise à jour du pointeur première lettre
+    free(to_destroy);                               //et destruction de la vielle lettre (mais pas de son contenu)
+    return SUCCESS;
 }
