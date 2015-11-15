@@ -25,6 +25,7 @@ int aboMsg(communication * my_com, int id)
     }
     //-------------------------------------------------------------------------------
 
+    my_com->client_id = id;
     my_com->operation = NO_OP;
     my_com->retour = -1;
 
