@@ -20,7 +20,7 @@ typedef struct message {
 } message;
 
 int initMsg();
-int aboMsg(communication *);
+int aboMsg(communication *, int id);
 int sendMsg(communication * mycom, int id_dest, void * contenu);
 int recvMsg(communication *, message **msg);
 int getNbMsg(communication *);
