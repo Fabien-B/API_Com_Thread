@@ -4,9 +4,9 @@
 #include <pthread.h>
 #include "types_private.h"
 #include "api_com.h"
+#include <string.h>
 
-
-int sendMsg(communication * mycom, int id_dest, void * contenu)
+int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
 {
     if(_thread_gest==NULL)
     {
@@ -14,7 +14,24 @@ int sendMsg(communication * mycom, int id_dest, void * contenu)
     }
     mycom->operation = SENDMSG;
     mycom->dest_id = id_dest;
-    mycom->contenu = contenu;
+
+    message * mess_to_send = NULL;          //création d'un message
+    mess_to_send = malloc(sizeof(message));
+    if(mess_to_send == NULL){
+        return TECH_ERROR;
+    }
+
+    mess_to_send->expid = mycom->client_id; //signature expéditeur
+
+    mess_to_send->contenu = NULL;           //création du contenu du message
+    mess_to_send->contenu = malloc(data_size);
+    if(mess_to_send->contenu == NULL){
+        return TECH_ERROR;
+    }
+
+    memcpy(mess_to_send->contenu,contenu,data_size);    //copie des données (l'émétteur peut alors supprimer l'original sans affecter la réception)
+
+    mycom->contenu = mess_to_send;
     mycom->retour = -1;
 
     pthread_mutex_lock(mycom->mutex);  //je lock mon mutex pour que le signal ne me soit envoyé que pendant mon wait

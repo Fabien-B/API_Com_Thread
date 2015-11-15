@@ -1,6 +1,7 @@
 #ifndef API_COM_H_INCLUDED
 #define API_COM_H_INCLUDED
 #include <pthread.h>
+#include <sys/time.h>
 
 typedef struct communication {
     int client_id;
@@ -16,12 +17,13 @@ typedef struct communication {
 typedef struct message {
     void * contenu;
     int expid;
-    struct timeval *tv;     //to use with gettimeofday
+    struct timezone tz;
+    struct timeval tv;
 } message;
 
 int initMsg();
 int aboMsg(communication *, int id);
-int sendMsg(communication * mycom, int id_dest, void * contenu);
+int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size);
 int recvMsg(communication *, message **msg);
 int getNbMsg(communication *);
 int desaboMsg(communication *);

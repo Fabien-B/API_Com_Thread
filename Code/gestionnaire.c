@@ -30,7 +30,6 @@ void * gestionnaire(void * arg)
         //_mutex_abo locké par le wait
         if(!_abo_traite)    //un abonnement à gérer !
         {
-printf("ABO\n");
             int flag = SUCCESS;     //succes by default, modified if there is an error.
             pthread_mutex_lock(_com_abo->mutex);  //lock mutex client
             if(nb_messageries<NB_ABO_MAX || fin)
@@ -76,10 +75,10 @@ printf("ABO\n");
                 switch(tab[i].client->operation)
                 {
                     case SENDMSG:
-                        ret = handleSend(tab[i].client->client_id, tab[i].client->contenu);
+                        ret = handleSend(tab, nb_messageries, i);
                         break;
                     case RECVMSG:
-                        //ret = handleRcv();
+                        ret = handleRcv(tab[i]);
                         break;
                     case CLOSESERVICE:
                         ret = close_service(0);
@@ -87,10 +86,6 @@ printf("ABO\n");
                     case CLOSESERVICE_FORCED:
                         ret = close_service(1);
                         break;
-
-
-
-
                 }
                 tab[i].client->retour = ret;
                 pthread_cond_signal(tab[i].client->signal_gestionnaire);
@@ -109,18 +104,6 @@ printf("ABO\n");
     pthread_exit(0);
 }
 
-
-
-int handleSend(int sender_id, void * contenu)   //crée un message daté et signé avec les données du client.
-{
-    printf("ON ENVOIE!!!\n");
-    return 0;
-}
-
-int handleRcv()
-{
-    return 2;
-}
 
 int close_service(int flag)
 {
