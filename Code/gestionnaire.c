@@ -26,11 +26,13 @@ void * gestionnaire(void * arg)
     pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal (avec unlock automatique du mutex, puis lock à la sortie)
     while(1)
     {
+    usleep(1000);
         //_mutex_abo locké par le wait
         if(!_abo_traite)    //un abonnement à gérer !
         {
+printf("ABO\n");
             int flag = SUCCESS;     //succes by default, modified if there is an error.
-
+            pthread_mutex_lock(_com_abo->mutex);  //lock mutex client
             if(nb_messageries<NB_ABO_MAX || fin)
             {
                 int i;
@@ -56,12 +58,11 @@ void * gestionnaire(void * arg)
             {
                 flag = MAX_ABO;
             }
-            pthread_mutex_lock(_com_abo->mutex);  //lock mutex client
             _com_abo->retour = flag;       //met la valeur de retour à success.
             pthread_cond_signal(_com_abo->signal_gestionnaire);   //réveille le client.
             pthread_mutex_unlock(_com_abo->mutex);    //unlock mutex client
             _abo_traite = 1;    //demande d'abo traitée, on peut en faire d'autre !
-            ///pthread_mutex_unlock(&_mutex_abo);
+            _com_abo = NULL;
         }
 
 
@@ -71,14 +72,16 @@ void * gestionnaire(void * arg)
 //usleep(1000);
 //printf("NB MSGR : %d (%d)\n", nb_messageries,i);
 printf("avant lock %d\n",i);
+//sleep(5);
             pthread_mutex_lock(tab[i].client->mutex);
 printf("APRES lock %d\n",i);
             if(tab[i].client->operation != NO_OP)
             {
                 //ACTIONS (switch case)!
                 //int ret;
-                int ret = -5;
-                /*switch(tab[i].client->operation)
+                printf("AAAAAAAAAAAAAAAA");
+                int ret = -1;
+                switch(tab[i].client->operation)
                 {
                     case SENDMSG:
                         ret = handleSend(tab[i].client->client_id, tab[i].client->contenu);
@@ -86,18 +89,28 @@ printf("APRES lock %d\n",i);
                     case RECVMSG:
                         //ret = handleRcv();
                         break;
+                    case CLOSESERVICE:
+                        ret = close_service(0);
+                        break;
+                    case CLOSESERVICE_FORCED:
+                        ret = close_service(1);
+                        break;
 
 
 
 
-                }*/
+                }
                 tab[i].client->retour = ret;
                 pthread_cond_signal(tab[i].client->signal_gestionnaire);
-                //printf("tggggggg\n");
             }
-            printf("qqqqq\n");
+printf("AV\n");
             pthread_mutex_unlock(tab[i].client->mutex);
-printf("ertre\n");
+            if (fin)
+            {
+                sleep(2);
+                //pthread_exit(0);
+            }
+printf("AP -> boucle OK\n");
         }
 
         pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal pour effectuer la boule suivante
@@ -113,7 +126,14 @@ int handleSend(int sender_id, void * contenu)   //crée un message daté et sign
     return 0;
 }
 
-void handleRcv()
+int handleRcv()
 {
+    return 2;
+}
 
+int close_service(int flag)
+{
+    //frees....
+
+    return 789;
 }
