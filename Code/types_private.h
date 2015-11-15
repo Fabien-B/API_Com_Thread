@@ -25,4 +25,5 @@ extern int fin;
 
 void * gestionnaire(void * arg);
 int handleSend(int sender_id, void * contenu);
+int close_service(int flag);
 #endif // TYPES_PRIVATE_H_INCLUDED
