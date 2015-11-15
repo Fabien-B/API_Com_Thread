@@ -19,7 +19,7 @@ int initMsg()
 
     pthread_mutex_lock(&_mutex_abo);
 
-    //if (pthread_create(_thread_gest, NULL, gestionnaire, NULL)!=0){
+//if (pthread_create(_thread_gest, NULL, gestionnaire, NULL)!=0){
     if (pthread_create(_thread_gest, PTHREAD_CREATE_JOINABLE, gestionnaire, NULL)!=0){
         printf("erreur creation thread gestionnaire\n");
         return INIT_ERROR; //TECH_ERROR
@@ -28,7 +28,7 @@ int initMsg()
 
     while(_abo_traite == 0)     //si on arrive vite, on attend que le gestionnaire soit en régime de croisière.
     {
-        //usleep(1000);
+        usleep(1000);
         pthread_mutex_lock(&_mutex_abo);
         pthread_mutex_unlock(&_mutex_abo);    //le challenge : pouvoir prendre le mutex, et que _abo_traite soit à 1.
 
@@ -56,7 +56,6 @@ int finMsg(int force)
 
     pthread_mutex_lock(fin_com.mutex);
 
-//sleep(1);
     if(force)
     {
         fin_com.operation = CLOSESERVICE_FORCED;
@@ -69,10 +68,8 @@ int finMsg(int force)
     fin_com.retour = -1;
 
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-//sleep(2);
 
     while(fin_com.retour == -1)              //tant que le gestionnaire n'a pas fait son action...
-    //while(1)              //tant que le gestionnaire n'a pas fait son action...
     {
     usleep(1000);
         pthread_cond_wait(fin_com.signal_gestionnaire, fin_com.mutex);    //on attend
@@ -81,7 +78,7 @@ int finMsg(int force)
     int code_retour = fin_com.retour;
     fin_com.operation = NO_OP;
     pthread_mutex_unlock(fin_com.mutex);
-    //pthread_join(*_thread_gest,NULL);
+//pthread_join(*_thread_gest,NULL);
     //int pj;
    /* if(pthread_join(*_thread_gest,NULL))
     {

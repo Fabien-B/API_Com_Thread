@@ -14,7 +14,7 @@ int aboMsg(communication * my_com, int id)
         return NO_SERVICE;
     }
 
-
+    //création et initialisation des mutex et condition. ---------------------------
     my_com->signal_gestionnaire = malloc(sizeof(pthread_cond_t));
     if (pthread_cond_init(my_com->signal_gestionnaire, NULL) != 0) {
         return TECH_ERROR;
@@ -23,6 +23,7 @@ int aboMsg(communication * my_com, int id)
     if (pthread_mutex_init(my_com->mutex,NULL) != 0) {
         return TECH_ERROR;
     }
+    //-------------------------------------------------------------------------------
 
     my_com->operation = NO_OP;
     my_com->retour = -1;
@@ -30,9 +31,9 @@ int aboMsg(communication * my_com, int id)
 	int abo_ok = 0;
 	while(abo_ok == 0)						// Si l'ancienne demande d'abonnement n'est pas prise en compte ont attend
     {
-        pthread_mutex_lock(&_mutex_abo);
         if(_abo_traite == 1)    //pas d'abonnement en cours, on y va !
         {
+            pthread_mutex_lock(&_mutex_abo);
             abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
             _abo_traite = 0;    //indique un abonnement en cours. le gestionnaire le remettra a 1.
 
@@ -51,7 +52,6 @@ int aboMsg(communication * my_com, int id)
             return ret;                   //retourne le code renvoyé par le gestionnaire
         }
 
-        pthread_mutex_unlock(&_mutex_abo);
         usleep(1000);
     }
 

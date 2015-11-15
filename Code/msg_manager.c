@@ -12,29 +12,23 @@ int sendMsg(communication * mycom, int id_dest, void * contenu)
     {
         return NO_SERVICE;
     }
-    //printf("debut send\n");
     mycom->operation = SENDMSG;
     mycom->dest_id = id_dest;
     mycom->contenu = contenu;
     mycom->retour = -1;
 
-    pthread_mutex_lock(&_mutex_abo);
     pthread_mutex_lock(mycom->mutex);  //je lock mon mutex pour que le signal ne me soit envoyé que pendant mon wait
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-    pthread_mutex_unlock(&_mutex_abo);      //et on le laisse bosser
     while(mycom->retour == -1)              //tant que le gestionnaire n'a pas fait son action...
     {
-        printf("avant wait\n");
-        //pthread_mutex_unlock(mycom->mutex);
         pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);    //on attend
-        printf("APRES wait\n");
     }
 
     int code_retour = mycom->retour;
     mycom->operation = NO_OP;
     pthread_mutex_unlock(mycom->mutex);
+    printf("fin send\n");
     return code_retour;
-printf("fin send\n");
 }
 
 

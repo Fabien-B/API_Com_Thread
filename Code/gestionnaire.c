@@ -39,7 +39,6 @@ printf("ABO\n");
                 for(i=0;i<nb_messageries;i++) //parcours liste abo pour vérif id demandé.
                 {
                     pthread_mutex_lock(tab[i].client->mutex);
-                    //pthread_mutex_lock(????????????????????????|||||????);
                     if(tab[i].client->client_id == _com_abo->client_id)
                     {
                         flag = ID_IN_USE;
@@ -69,17 +68,10 @@ printf("ABO\n");
         int i;
         for(i=0;i<nb_messageries;i++) //parcours liste abo executer les actions id demandées.
         {
-//usleep(1000);
-//printf("NB MSGR : %d (%d)\n", nb_messageries,i);
-printf("avant lock %d\n",i);
-//sleep(5);
             pthread_mutex_lock(tab[i].client->mutex);
-printf("APRES lock %d\n",i);
             if(tab[i].client->operation != NO_OP)
             {
                 //ACTIONS (switch case)!
-                //int ret;
-                printf("AAAAAAAAAAAAAAAA");
                 int ret = -1;
                 switch(tab[i].client->operation)
                 {
@@ -103,14 +95,13 @@ printf("APRES lock %d\n",i);
                 tab[i].client->retour = ret;
                 pthread_cond_signal(tab[i].client->signal_gestionnaire);
             }
-printf("AV\n");
             pthread_mutex_unlock(tab[i].client->mutex);
             if (fin)
             {
-                sleep(2);
+                fin = 0;
+                printf("pthread_exit ici\n");
                 //pthread_exit(0);
             }
-printf("AP -> boucle OK\n");
         }
 
         pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal pour effectuer la boule suivante
