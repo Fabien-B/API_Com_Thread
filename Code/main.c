@@ -35,6 +35,12 @@ int main()
     ret = sendMsg(&com2,15,&b, 50*sizeof(char));
     printf("send : %d\n", ret);
 
+    ret = getNbAbo(&a);
+    printf("get nb abo : %d      nbAbo: %d\n", ret,a);
+
+    ret = isAbo(15,&a);
+    printf("is abo : %d      res: %d\n", ret,a);
+
     //reception d'un int
     message * mymess;
     ret = recvMsg(&com3,&mymess);
