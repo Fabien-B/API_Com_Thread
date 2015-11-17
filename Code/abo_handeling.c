@@ -26,7 +26,6 @@ int aboMsg(communication * my_com, int id)
     //-------------------------------------------------------------------------------
 
     my_com->client_id = id;
-    my_com->operation = NO_OP;
     my_com->retour = -1;
 
 	int abo_ok = 0;
@@ -37,19 +36,17 @@ int aboMsg(communication * my_com, int id)
             pthread_mutex_lock(&_mutex_abo);
             abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
             _abo_traite = 0;    //indique un abonnement en cours. le gestionnaire le remettra a 1.
-
             //abonnement
             _com_abo = my_com; //mise à dispo de ma struct communication.
-
-            pthread_mutex_lock(my_com->mutex);      //lock pour recevoir le signal pendant le wait (pas avant)
+            _com_abo->operation = ABO;
             pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-            pthread_mutex_unlock(&_mutex_abo);      //et libération mutex
-            while(my_com->retour == -1)              //attente d'un signal venant du gestionnaire
+            while(_com_abo->retour == -1)              //attente d'un signal venant du gestionnaire
             {
-                pthread_cond_wait(my_com->signal_gestionnaire, my_com->mutex);   //il communique avec les objets que je lui ai spécifiés.
+                pthread_cond_wait(_com_abo->signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
             }
-            int ret = my_com->retour;
-            pthread_mutex_unlock(my_com->mutex);
+            int ret = _com_abo->retour;
+            pthread_mutex_unlock(&_mutex_abo);
+            //_com_abo = NULL;
             return ret;                   //retourne le code renvoyé par le gestionnaire
         }
 
@@ -79,7 +76,7 @@ int desaboMsg(communication * mycom)
     {
         pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);
     }
-
+    _com_abo = NULL;
     mycom->operation = NO_OP;
     pthread_mutex_destroy(mycom->mutex);
     return mycom->retour;

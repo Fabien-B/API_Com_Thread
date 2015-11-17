@@ -26,6 +26,7 @@ extern int fin;
 void * gestionnaire(void * arg);
 //int handleSend(int sender_id, void * contenu, messagerie * tab, int nb_messageries);
 int handleSend(messagerie * tab, int nb_messageries, int id_sender);
+int handleAbo(messagerie * tab, int * nb_messageries);
 int handleRcv(messagerie * mess);
 int close_service(int flag);
 #endif // TYPES_PRIVATE_H_INCLUDED

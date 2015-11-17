@@ -53,7 +53,8 @@ typedef enum operations {
     DESABO,             //4
     ISABO,              //5
     GETNBABO,           //6
-    CLOSESERVICE        //7
+    CLOSESERVICE,       //7
+    ABO
 } operations;
 
 #endif // API_COM_H_INCLUDED

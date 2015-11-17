@@ -28,79 +28,61 @@ void * gestionnaire(void * arg)
     while(1)
     {
     usleep(1000);
-        //_mutex_abo locké par le wait
-        if(!_abo_traite)    //un abonnement à gérer !
+    if(_com_abo != NULL && _com_abo->operation != NO_OP)
+    {
+        //ACTIONS (switch case)!
+        int ret = -1;
+        switch(_com_abo->operation)
         {
-            int flag = SUCCESS;     //succes by default, modified if there is an error.
-            pthread_mutex_lock(_com_abo->mutex);  //lock mutex client
-            if(nb_messageries<NB_ABO_MAX || fin)
-            {
-                int i;
-                for(i=0;i<nb_messageries;i++) //parcours liste abo pour vérif id demandé.
-                {
-                    pthread_mutex_lock(tab[i].client->mutex);
-                    if(tab[i].client->client_id == _com_abo->client_id)
-                    {
-                        flag = ID_IN_USE;
-                    }
-                    pthread_mutex_unlock(tab[i].client->mutex);
-                }
-
-                if(flag != ID_IN_USE)   //si id dispo, on enregistre.
-                {
-                    tab[nb_messageries].client = _com_abo;  //tout ok, stockage dans le tableau
-                    tab[nb_messageries].first_letter = NULL;   //pas de msg au début
-                    nb_messageries ++;  //un abo de plus.
-                }
-            }
-            else
-            {
-                flag = MAX_ABO;
-            }
-            _com_abo->retour = flag;       //met la valeur de retour à success.
-            pthread_cond_signal(_com_abo->signal_gestionnaire);   //réveille le client.
-            pthread_mutex_unlock(_com_abo->mutex);    //unlock mutex client
-            _abo_traite = 1;    //demande d'abo traitée, on peut en faire d'autre !
-            _com_abo = NULL;
+            case ABO:
+                ret = handleAbo(tab, &nb_messageries);
+                break;
+            case GETNBABO:
+                ret = handleGetNbAbo(nb_messageries);
+                break;
+            case ISABO:
+                ret = handleIsAbo(tab, &nb_messageries);
+                break;
         }
+        _com_abo->retour = ret;
+        pthread_cond_signal(_com_abo->signal_gestionnaire);
+    }
 
-
-        int i;
-        for(i=0;i<nb_messageries;i++) //parcours liste abo executer les actions id demandées.
+    int i;
+    for(i=0;i<nb_messageries;i++) //parcours liste abo executer les actions id demandées.
+    {
+        pthread_mutex_lock(tab[i].client->mutex);
+        if(tab[i].client->operation != NO_OP)
         {
-            pthread_mutex_lock(tab[i].client->mutex);
-            if(tab[i].client->operation != NO_OP)
+            //ACTIONS (switch case)!
+            int ret = -1;
+            switch(tab[i].client->operation)
             {
-                //ACTIONS (switch case)!
-                int ret = -1;
-                switch(tab[i].client->operation)
-                {
-                    case SENDMSG:
-                        ret = handleSend(tab, nb_messageries, i);
-                        break;
-                    case RECVMSG:
-                        ret = handleRcv(&tab[i]);
-                        break;
-                    case CLOSESERVICE:
-                        ret = close_service(0);
-                        break;
-                    case CLOSESERVICE_FORCED:
-                        ret = close_service(1);
-                        break;
-                }
-                tab[i].client->retour = ret;
-                pthread_cond_signal(tab[i].client->signal_gestionnaire);
+                case SENDMSG:
+                    ret = handleSend(tab, nb_messageries, i);
+                    break;
+                case RECVMSG:
+                    ret = handleRcv(&tab[i]);
+                    break;
+                case CLOSESERVICE:
+                    ret = close_service(0);
+                    break;
+                case CLOSESERVICE_FORCED:
+                    ret = close_service(1);
+                    break;
             }
-            pthread_mutex_unlock(tab[i].client->mutex);
-            if (fin)
-            {
-                fin = 0;
-                printf("pthread_exit ici\n");
-                //pthread_exit(0);
-            }
+            tab[i].client->retour = ret;
+            pthread_cond_signal(tab[i].client->signal_gestionnaire);
         }
-
-        pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal pour effectuer la boule suivante
+        pthread_mutex_unlock(tab[i].client->mutex);
+        if (fin)
+        {
+            fin = 0;
+            printf("pthread_exit ici\n");
+            //pthread_exit(0);
+        }
+    }
+    pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal pour effectuer la boule suivante
     }
     pthread_exit(0);
 }
@@ -113,3 +95,4 @@ int close_service(int flag)
 
     return 789;
 }
+
