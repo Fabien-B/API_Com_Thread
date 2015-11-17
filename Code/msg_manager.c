@@ -65,7 +65,7 @@ int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur point
         pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);
     }
 
-    int code_retour = mycom->retour;
+   int code_retour = mycom->retour;
     mycom->operation = NO_OP;
 
     if(code_retour == SUCCESS)

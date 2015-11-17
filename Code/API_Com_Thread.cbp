@@ -38,6 +38,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="api_com.h" />
+		<Unit filename="gest_abo.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="gestionnaire.c">
 			<Option compilerVar="CC" />
 		</Unit>

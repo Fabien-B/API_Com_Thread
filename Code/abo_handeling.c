@@ -81,3 +81,98 @@ int desaboMsg(communication * mycom)
     pthread_mutex_destroy(mycom->mutex);
     return mycom->retour;
 }
+
+
+int getNbAbo(int * nb)
+{
+    if(_thread_gest==NULL)
+    {
+        return NO_SERVICE;
+    }
+
+    communication my_com;       //création d'une struct communication pour communiquer avec le gestionnaire
+
+    //création et initialisation des mutex et condition. ---------------------------
+    my_com.signal_gestionnaire = malloc(sizeof(pthread_cond_t));
+    if (pthread_cond_init(my_com.signal_gestionnaire, NULL) != 0) {
+        return TECH_ERROR;
+    }
+    my_com.mutex = malloc(sizeof(pthread_mutex_t));
+    if (pthread_mutex_init(my_com.mutex,NULL) != 0) {
+        return TECH_ERROR;
+    }
+    //-------------------------------------------------------------------------------
+
+    my_com.client_id = -1;          //sert à rien ici
+    my_com.operation = GETNBABO;
+    my_com.contenu = NULL;
+    my_com.contenu = malloc(sizeof(int));
+    if(my_com.contenu == NULL)
+    {
+        return TECH_ERROR;
+    }
+    my_com.retour = -1;
+
+    pthread_mutex_lock(&_mutex_abo);
+    _com_abo = &my_com; //mise à dispo de ma struct communication.
+    pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+    while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
+    {
+        pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
+    }
+    _com_abo = NULL;
+    int ret = my_com.retour;
+    int * nb_abo = my_com.contenu;
+    *nb = *nb_abo;
+    free(my_com.contenu);
+    pthread_mutex_unlock(&_mutex_abo);
+    return ret;                   //retourne le code renvoyé par le gestionnaire
+}
+
+
+int isAbo(int id, int * result)
+{
+    if(_thread_gest==NULL)
+    {
+        return NO_SERVICE;
+    }
+
+    communication my_com;       //création d'une struct communication pour communiquer avec le gestionnaire
+
+    //création et initialisation des mutex et condition. ---------------------------
+    my_com.signal_gestionnaire = malloc(sizeof(pthread_cond_t));
+    if (pthread_cond_init(my_com.signal_gestionnaire, NULL) != 0) {
+        return TECH_ERROR;
+    }
+    my_com.mutex = malloc(sizeof(pthread_mutex_t));
+    if (pthread_mutex_init(my_com.mutex,NULL) != 0) {
+        return TECH_ERROR;
+    }
+    //-------------------------------------------------------------------------------
+
+    my_com.client_id = -1;          //sert à rien ici
+    my_com.operation = ISABO;
+    my_com.contenu = NULL;
+    my_com.contenu = malloc(sizeof(int));
+    if(my_com.contenu == NULL)
+    {
+        return TECH_ERROR;
+    }
+    int * data = my_com.contenu;
+    *data = id;
+    my_com.retour = -1;
+
+    pthread_mutex_lock(&_mutex_abo);
+    _com_abo = &my_com; //mise à dispo de ma struct communication.
+    pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+    while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
+    {
+        pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
+    }
+    _com_abo = NULL;
+    int ret = my_com.retour;
+    *result = *data;
+    free(my_com.contenu);
+    pthread_mutex_unlock(&_mutex_abo);
+    return ret;                   //retourne le code renvoyé par le gestionnaire
+}

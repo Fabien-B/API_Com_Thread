@@ -28,5 +28,7 @@ void * gestionnaire(void * arg);
 int handleSend(messagerie * tab, int nb_messageries, int id_sender);
 int handleAbo(messagerie * tab, int * nb_messageries);
 int handleRcv(messagerie * mess);
+int handleGetNbAbo(int nb_messageries);
+int handleIsAbo(messagerie * tab, int * nb_messageries);
 int close_service(int flag);
 #endif // TYPES_PRIVATE_H_INCLUDED
