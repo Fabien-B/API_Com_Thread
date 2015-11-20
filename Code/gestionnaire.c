@@ -43,9 +43,24 @@ void * gestionnaire(void * arg)
             case ISABO:
                 ret = handleIsAbo(tab, &nb_messageries);
                 break;
+            case CLOSESERVICE:
+                    ret = close_service(0);
+                    break;
+            case CLOSESERVICE_FORCED:
+                ret = close_service(1);
+                break;
         }
         _com_abo->retour = ret;
         pthread_cond_signal(_com_abo->signal_gestionnaire);
+    }
+
+    if (fin)
+    {
+        fin = 0;
+        pthread_mutex_unlock(&_mutex_abo);
+        sleep(1);
+        printf("pthread_exit ici\n");
+        pthread_exit(0);
     }
 
     int i;
@@ -71,23 +86,11 @@ void * gestionnaire(void * arg)
                 case GETNBMSG:
 					ret = handleGetNbMsg(&tab[i]);
 					break;
-                case CLOSESERVICE:
-                    ret = close_service(0);
-                    break;
-                case CLOSESERVICE_FORCED:
-                    ret = close_service(1);
-                    break;
             }
             com_client->retour = ret;
             pthread_cond_signal(com_client->signal_gestionnaire);
         }
         pthread_mutex_unlock(com_client->mutex);
-        if (fin)
-        {
-            fin = 0;
-            printf("pthread_exit ici\n");
-            //pthread_exit(0);
-        }
     }
     pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal pour effectuer la boule suivante
     }

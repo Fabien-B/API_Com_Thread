@@ -41,43 +41,49 @@ int initMsg()
 
 int finMsg(int force)
 {
-    if(_thread_gest==NULL)  //thread non lancé, pas besoinde l'arreter.
+    if(_thread_gest==NULL)
     {
         return NO_SERVICE;
     }
 
-    communication fin_com;
+    communication my_com;       //création d'une struct communication pour communiquer avec le gestionnaire
 
-    pthread_mutex_lock(&_mutex_abo);
-    fin = 1;
-    pthread_mutex_unlock(&_mutex_abo);
+    //création et initialisation des mutex et condition. ---------------------------
+    my_com.signal_gestionnaire = malloc(sizeof(pthread_cond_t));
+    if (pthread_cond_init(my_com.signal_gestionnaire, NULL) != 0) {
+        return TECH_ERROR;
+    }
+    my_com.mutex = malloc(sizeof(pthread_mutex_t));
+    if (pthread_mutex_init(my_com.mutex,NULL) != 0) {
+        return TECH_ERROR;
+    }
+    //-------------------------------------------------------------------------------
 
-    aboMsg(&fin_com, 45);
-
-    pthread_mutex_lock(fin_com.mutex);
-
+    my_com.client_id = -1;          //sert à rien ici
     if(force)
     {
-        fin_com.operation = CLOSESERVICE_FORCED;
+        my_com.operation = CLOSESERVICE_FORCED;
     }
     else
     {
-        fin_com.operation = CLOSESERVICE;
+        my_com.operation = CLOSESERVICE;
     }
+    my_com.retour = -1;
 
-    fin_com.retour = -1;
-
+    pthread_mutex_lock(&_mutex_abo);
+    fin = 1;
+    _com_abo = &my_com; //mise à dispo de ma struct communication.
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-
-    while(fin_com.retour == -1)              //tant que le gestionnaire n'a pas fait son action...
+    while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
     {
-    usleep(1000);
-        pthread_cond_wait(fin_com.signal_gestionnaire, fin_com.mutex);    //on attend
+        pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
     }
+    _com_abo = NULL;
+    int ret = my_com.retour;
+    my_com.operation = NO_OP;
+    pthread_mutex_unlock(&_mutex_abo);
+    return ret;                 //retourne le code renvoyé par le gestionnaire
 
-    int code_retour = fin_com.retour;
-    fin_com.operation = NO_OP;
-    pthread_mutex_unlock(fin_com.mutex);
     ///TODO : pthread_join
 //pthread_join(*_thread_gest,NULL);
     //int pj;
@@ -85,5 +91,4 @@ int finMsg(int force)
     {
         return pj;
     }*/
-    return code_retour;
 }
