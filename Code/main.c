@@ -32,8 +32,11 @@ int main()
 
     //envoie d'une chaine de caractères
     char b[50] = "Si tu vois ce message, c'est gagne !";
-    ret = sendMsg(&com2,15,&b, 50*sizeof(char));
-    printf("send : %d\n", ret);
+    int i;
+    for(i=0;i<10;i++)
+    {
+		ret = sendMsg(&com2,15,&b, 50*sizeof(char));
+	}
 
     ret = getNbAbo(&a);
     printf("get nb abo : %d      nbAbo: %d\n", ret,a);
@@ -47,6 +50,12 @@ int main()
     printf("recv : %d\n", ret);
     int* aq = mymess->contenu;
     printf("message: %d\n",*aq);
+
+	//reception du nombre de message dans notre messagerie
+    ret = getNbMsg(&com3);
+    printf("recv nb_msg_mess: %d\n", ret);
+    int * nb_msg = com3.contenu;
+    printf("Nombre de messages: %d\n",*nb_msg);
 
     //reception d'une chaine de caractères
     message * mymess2;

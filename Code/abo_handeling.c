@@ -163,7 +163,7 @@ int isAbo(int id, int * result)
     my_com.retour = -1;
 
     pthread_mutex_lock(&_mutex_abo);
-    _com_abo = &my_com; //mise à dispo de ma struct communication.
+    _com_abo = &my_com; 			//mise à dispo de ma struct communication.
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
     while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
     {

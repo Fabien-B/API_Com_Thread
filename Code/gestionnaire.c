@@ -18,13 +18,13 @@ int fin = 0;
 
 void * gestionnaire(void * arg)
 {
-    pthread_mutex_lock(&_mutex_abo);    //lock mutex pour ne rien faire tant qu'on est pas en croisière
+    pthread_mutex_lock(&_mutex_abo);    				//lock mutex pour ne rien faire tant qu'on est pas en croisière
 
     int nb_messageries = 0;
-    messagerie tab[NB_ABO_MAX+1];     //crée les messageries
+    messagerie tab[NB_ABO_MAX+1];     					//crée les messageries
 
-    _abo_traite = 1;                //variable pour la vérification de la phase croisière
-    pthread_cond_wait(&_client_signal, &_mutex_abo);      //attente d'un signal (avec unlock automatique du mutex, puis lock à la sortie)
+    _abo_traite = 1;                					//variable pour la vérification de la phase croisière
+    pthread_cond_wait(&_client_signal, &_mutex_abo);    //attente d'un signal (avec unlock automatique du mutex, puis lock à la sortie)
     while(1)
     {
     usleep(1000);
@@ -64,6 +64,9 @@ void * gestionnaire(void * arg)
                 case RECVMSG:
                     ret = handleRcv(&tab[i]);
                     break;
+                case GETNBMSG:
+					ret = handleGetNbMsg(&tab[i]);
+					break;
                 case CLOSESERVICE:
                     ret = close_service(0);
                     break;
