@@ -51,18 +51,22 @@ void * gestionnaire(void * arg)
     int i;
     for(i=0;i<nb_messageries;i++) //parcours liste abo executer les actions id demandées.
     {
+        communication * com_client = tab[i].client;
         pthread_mutex_lock(tab[i].client->mutex);
-        if(tab[i].client->operation != NO_OP)
+        if(com_client->operation != NO_OP)
         {
             //ACTIONS (switch case)!
             int ret = -1;
-            switch(tab[i].client->operation)
+            switch(com_client->operation)
             {
                 case SENDMSG:
                     ret = handleSend(tab, nb_messageries, i);
                     break;
                 case RECVMSG:
                     ret = handleRcv(&tab[i]);
+                    break;
+                case DESABO:
+                    ret = handleDesabo(tab,&nb_messageries,i);
                     break;
                 case CLOSESERVICE:
                     ret = close_service(0);
@@ -71,10 +75,10 @@ void * gestionnaire(void * arg)
                     ret = close_service(1);
                     break;
             }
-            tab[i].client->retour = ret;
-            pthread_cond_signal(tab[i].client->signal_gestionnaire);
+            com_client->retour = ret;
+            pthread_cond_signal(com_client->signal_gestionnaire);
         }
-        pthread_mutex_unlock(tab[i].client->mutex);
+        pthread_mutex_unlock(com_client->mutex);
         if (fin)
         {
             fin = 0;

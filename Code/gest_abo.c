@@ -43,6 +43,34 @@ int handleAbo(messagerie * tab, int * nb_messageries)
 }
 
 
+int handleDesabo(messagerie * tab, int * nb_messageries, int index_sender)
+{
+    if(tab[index_sender].first_letter != NULL)      //liberation des lettres
+    {
+        lettre * current_letter = tab[index_sender].first_letter;
+        while(current_letter->next != NULL)   //recherche pointeur lettre suivant la dernière
+        {
+            lettre * next_letter = current_letter->next;
+            free(current_letter->mail);
+            free(current_letter->next);
+            free(current_letter);
+            current_letter = next_letter;
+        }
+            free(current_letter->mail);
+            free(current_letter->next);
+            free(current_letter);
+    }
+
+    int i;
+    for(i=index_sender;i<*nb_messageries-1;i++)     //decalage des messageries suivantes
+    {
+        tab[i]=tab[i+1];
+    }
+    (*nb_messageries)--;
+    return SUCCESS;
+}
+
+
 int handleGetNbAbo(int nb_messageries)
 {
         _com_abo->operation = NO_OP;

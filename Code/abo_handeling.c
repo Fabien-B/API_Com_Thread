@@ -82,17 +82,25 @@ int desaboMsg(communication * mycom)
     mycom->operation = DESABO;
     mycom->retour = -1;
 
-    pthread_mutex_lock(&_mutex_abo);
+    pthread_mutex_lock(mycom->mutex);  //je lock mon mutex pour que le signal ne me soit envoyé que pendant mon wait
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-    pthread_mutex_unlock(&_mutex_abo);
 
     while(mycom->retour == -1)
     {
         pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);
     }
-    _com_abo = NULL;
-    mycom->operation = NO_OP;
-    pthread_mutex_destroy(mycom->mutex);
+
+    mycom->operation = NO_OP;       //inutile en theorie
+    //int destr = pthread_mutex_destroy(mycom->mutex);              //ça plante: pourquoi ?
+    int destr = pthread_cond_destroy(mycom->signal_gestionnaire);
+    if(destr)
+    {
+        return TECH_ERROR;
+    }
+    free(mycom->mutex);
+    free(mycom->signal_gestionnaire);
+    //*contenu est géré par l'utilisateur
+mycom->operation = NO_OP;
     return mycom->retour;
 }
 
