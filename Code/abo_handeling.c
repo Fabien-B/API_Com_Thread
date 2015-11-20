@@ -14,6 +14,13 @@ int aboMsg(communication * my_com, int id)
         return NO_SERVICE;
     }
 
+    int abo_state;
+    isAbo(id,&abo_state);
+    if(abo_state)
+    {
+        return ID_IN_USE;
+    }
+
     //création et initialisation des mutex et condition. ---------------------------
     my_com->signal_gestionnaire = malloc(sizeof(pthread_cond_t));
     if (pthread_cond_init(my_com->signal_gestionnaire, NULL) != 0) {
@@ -63,6 +70,13 @@ int desaboMsg(communication * mycom)
     if(_thread_gest==NULL)
     {
         return NO_SERVICE;
+    }
+
+    int abo_state;
+    isAbo(mycom->client_id,&abo_state);
+    if(!abo_state)
+    {
+        return NO_ABO;
     }
 
     mycom->operation = DESABO;

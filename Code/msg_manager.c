@@ -12,6 +12,14 @@ int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
     {
         return NO_SERVICE;
     }
+
+    int abo_state;
+    isAbo(mycom->client_id,&abo_state);
+    if(!abo_state)
+    {
+        return NO_ABO;
+    }
+
     mycom->operation = SENDMSG;
     mycom->dest_id = id_dest;
 
@@ -53,6 +61,13 @@ int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur point
     if(_thread_gest==NULL)
     {
         return NO_SERVICE;
+    }
+
+    int abo_state;
+    isAbo(mycom->client_id,&abo_state);
+    if(!abo_state)
+    {
+        return NO_ABO;
     }
 
     mycom->operation = RECVMSG;
