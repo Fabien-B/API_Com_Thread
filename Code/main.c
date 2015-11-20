@@ -15,15 +15,15 @@ int main()
 
     communication com1;
     ret = aboMsg(&com1,5);
-    printf("abo %d: %d\n",com1.client_id,ret);
+    //printf("abo %d: %d\n",com1.client_id,ret);
 
     communication com2;
-    ret = aboMsg(&com2,51);
-    printf("abo %d: %d\n",com2.client_id,ret);
+    ret = aboMsg(&com2,5);
+    //printf("abo %d: %d\n",com2.client_id,ret);
 
     communication com3;
     ret = aboMsg(&com3,15);
-    printf("abo %d: %d\n",com3.client_id,ret);
+    //printf("abo %d: %d\n",com3.client_id,ret);
 
     //envoie d'un int
     int a = 42;
@@ -39,21 +39,40 @@ int main()
     printf("get nb abo : %d      nbAbo: %d\n", ret,a);
 
     ret = isAbo(15,&a);
-    printf("is abo : %d      res: %d\n", ret,a);
+    printf("is abo 15: %d      res: %d\n", ret,a);
+
+    ret = isAbo(31,&a);
+    printf("is abo 31: %d      res: %d\n", ret,a);
 
     //reception d'un int
     message * mymess;
     ret = recvMsg(&com3,&mymess);
     printf("recv : %d\n", ret);
-    int* aq = mymess->contenu;
-    printf("message: %d\n",*aq);
+    if(ret==0)
+    {
+        int* aq = mymess->contenu;
+        printf("message: %d     recu a %ld\n",*aq,mymess->tv.tv_sec);
+        free(mymess->contenu);
+        free(mymess);
+    }
 
     //reception d'une chaine de caractères
-    message * mymess2;
+    message * mymess2 = NULL;
     ret = recvMsg(&com3,&mymess2);
     printf("recv : %d\n", ret);
-    char * chaine = mymess2->contenu;
-    printf("message: %s\n",chaine);
+    if(ret==0)
+    {
+        char * chaine = mymess2->contenu;
+        printf("message: %s    reçu à %ld\n",chaine,mymess2->tv.tv_sec);
+        free(mymess2->contenu);
+        free(mymess2);
+    }
+
+    ret = desaboMsg(&com1);
+    printf("retour Desabo: %d\n",ret);
+
+    ret = aboMsg(&com1,5);
+    printf("abo %d: %d\n",com1.client_id,ret);
 
     ret = finMsg();
     printf("Valeur de retour fin: %d\n",ret);
