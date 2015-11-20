@@ -158,3 +158,52 @@ int handleRcv(messagerie * mess)
     free(to_destroy);                               //et destruction de la vielle lettre (mais pas de son contenu)
     return SUCCESS;
 }
+
+
+int handleGetNbMsg(messagerie * mess)
+{
+	int *i = malloc(sizeof(int));
+	*i = 0 ;
+	if(mess->first_letter == NULL)
+	{
+		mess->client->contenu = i;
+		return SUCCESS;
+	}
+
+	lettre * current_letter = mess->first_letter;
+	
+	while(current_letter->next != NULL)   //recherche pointeur lettre suivant la dernière
+	{
+		current_letter = current_letter->next;
+		(*i)++;
+		mess->client->contenu = i;
+	}
+	return SUCCESS;
+
+}
+
+
+int getNbMsg(communication * mycom)
+{
+	    if(_thread_gest==NULL)
+    {
+        return NO_SERVICE;
+    }
+
+    mycom->operation = GETNBMSG;
+    mycom->retour = -1;
+
+    pthread_mutex_lock(mycom->mutex);
+    pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+    
+    while(mycom->retour == -1)
+    {
+        pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);
+    }
+
+    int code_retour = mycom->retour;
+    mycom->operation = NO_OP;
+    pthread_mutex_unlock(mycom->mutex);
+    return code_retour;
+
+}
