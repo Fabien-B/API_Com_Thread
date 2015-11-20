@@ -43,7 +43,7 @@ typedef enum com_errors {
     NO_MSG,                 //8
     SERVICE_USED,           //9
     TECH_ERROR,             //10
-    CLOSESERVICE_FORCED     //11
+    STILL_REMAINS_ABOS      //11
 } com_errors;
 
 //l'abonnement est une opération spéciale, elle ne passe pas par le meme moyen.
@@ -56,7 +56,8 @@ typedef enum operations {
     ISABO,              //5
     GETNBABO,           //6
     CLOSESERVICE,       //7
-    ABO
+    CLOSESERVICE_FORCED,//11
+    ABO                 //12
 } operations;
 
 #endif // API_COM_H_INCLUDED

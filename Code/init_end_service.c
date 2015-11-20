@@ -78,6 +78,7 @@ int finMsg(int force)
     int code_retour = fin_com.retour;
     fin_com.operation = NO_OP;
     pthread_mutex_unlock(fin_com.mutex);
+    ///TODO : pthread_join
 //pthread_join(*_thread_gest,NULL);
     //int pj;
    /* if(pthread_join(*_thread_gest,NULL))
