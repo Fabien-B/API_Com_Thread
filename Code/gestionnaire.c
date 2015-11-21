@@ -50,6 +50,7 @@ void * gestionnaire(void * arg)
                 ret = close_service(1);
                 break;
         }
+        _com_abo->operation = NO_OP;
         _com_abo->retour = ret;
         pthread_cond_signal(_com_abo->signal_gestionnaire);
     }

@@ -164,45 +164,61 @@ int handleGetNbMsg(messagerie * mess)
 {
 	int *i = malloc(sizeof(int));
 	*i = 0 ;
+	mess->client->contenu = i;
+
 	if(mess->first_letter == NULL)
 	{
-		mess->client->contenu = i;
 		return SUCCESS;
 	}
 
 	lettre * current_letter = mess->first_letter;
-	
+
+    (*i)++;     //ne pas oublier de compter la premiere lettre
+
 	while(current_letter->next != NULL)   //recherche pointeur lettre suivant la dernière
 	{
 		current_letter = current_letter->next;
 		(*i)++;
-		mess->client->contenu = i;
 	}
-	return SUCCESS;
 
+	return SUCCESS;
 }
 
 
-int getNbMsg(communication * mycom)
+int getNbMsg(communication * mycom, int* nb_msg)
 {
-	    if(_thread_gest==NULL)
+    if(_thread_gest==NULL)
     {
         return NO_SERVICE;
     }
 
+    int abo_state;
+    isAbo(mycom->client_id,&abo_state);
+    if(!abo_state)
+    {
+        return NO_ABO;
+    }
+
     mycom->operation = GETNBMSG;
     mycom->retour = -1;
+    mycom->contenu = NULL;
 
     pthread_mutex_lock(mycom->mutex);
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-    
+
     while(mycom->retour == -1)
     {
         pthread_cond_wait(mycom->signal_gestionnaire, mycom->mutex);
     }
 
     int code_retour = mycom->retour;
-    mycom->operation = NO_OP;
+    if(mycom->contenu != NULL)
+    {
+        int *nb = mycom->contenu;
+        *nb_msg = *nb;
+        free(mycom->contenu);
+    }
+
     pthread_mutex_unlock(mycom->mutex);
     return code_retour;
 

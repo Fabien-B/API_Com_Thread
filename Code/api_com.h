@@ -27,7 +27,7 @@ int getNbAbo(int * nb);
 int isAbo(int id, int * result);
 int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size);
 int recvMsg(communication *, message **msg);
-int getNbMsg(communication *);
+int getNbMsg(communication *, int* nb_msg);
 int desaboMsg(communication *);
 int finMsg();
 
