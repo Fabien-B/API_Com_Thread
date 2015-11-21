@@ -35,7 +35,7 @@ int main()
     int i;
     for(i=0;i<10;i++)
     {
-		ret = sendMsg(&com2,15,&b, 50*sizeof(char));
+		ret = sendMsg(&com3,15,&b, 50*sizeof(char));
 	}
 
     ret = getNbAbo(&a);
@@ -60,10 +60,10 @@ int main()
     }
 
 	//reception du nombre de message dans notre messagerie
-    ret = getNbMsg(&com3);
+	int nb_msg;
+    ret = getNbMsg(&com3,&nb_msg);
     printf("recv nb_msg_mess: %d\n", ret);
-    int * nb_msg = com3.contenu;
-    printf("Nombre de messages: %d\n",*nb_msg);
+    printf("Nombre de messages: %d\n",nb_msg);
 
     //reception d'une chaine de caractères
     message * mymess2 = NULL;
