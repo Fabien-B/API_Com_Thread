@@ -131,10 +131,21 @@ int handleSend(messagerie * tab, int nb_messageries, int id_sender)
         }
 
         lettre * current_letter = tab[receiver].first_letter;
+        int nb_msg = 1;
         while(current_letter->next != NULL)   //recherche pointeur lettre suivant la dernière
         {
             current_letter = current_letter->next;
+            nb_msg++;
         }
+
+        if(nb_msg >= NB_LETTER_MAX)     //boite pleine
+        {
+            free(mess_to_send->contenu);
+            free(mess_to_send);
+            free(new_letter);
+            return INBOX_FULL;
+        }
+
         current_letter->next = new_letter;
         return SUCCESS;
     }

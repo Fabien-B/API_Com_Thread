@@ -43,7 +43,8 @@ typedef enum com_errors {
     NO_MSG,                 //8
     SERVICE_USED,           //9
     TECH_ERROR,             //10
-    STILL_REMAINS_ABOS      //11
+    STILL_REMAINS_ABOS,     //11
+    INBOX_FULL              //12
 } com_errors;
 
 //l'abonnement est une opération spéciale, elle ne passe pas par le meme moyen.
