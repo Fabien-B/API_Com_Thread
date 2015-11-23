@@ -97,6 +97,9 @@ int desaboMsg(communication * mycom)
     {
         return TECH_ERROR;
     }
+
+    pthread_mutex_destroy(mycom->mutex);
+    //pthread_cond_destroy(mycom->signal_gestionnaire);
     free(mycom->mutex);
     free(mycom->signal_gestionnaire);
     //*contenu est géré par l'utilisateur

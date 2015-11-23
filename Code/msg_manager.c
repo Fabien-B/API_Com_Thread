@@ -92,6 +92,18 @@ int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur point
     return code_retour;
 }
 
+int recvMsgBlock(communication * mycom, message **msg)
+{
+    int ret;
+    do
+    {
+        ret = recvMsg(mycom,msg);
+
+    }while(ret == NO_MSG);
+
+    return ret;
+}
+
 
 
 int handleSend(messagerie * tab, int nb_messageries, int id_sender)
