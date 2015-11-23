@@ -4,6 +4,91 @@
 #include <unistd.h>
 #include <pthread.h>
 
+char* corresp_errors[] = {"SUCCESS",
+"ALREADY_LAUNCH",
+"INIT_ERROR",
+"NO_SERVICE",
+"ID_IN_USE",
+"MAX_ABO",
+"NO_ABO",
+"ID_UNKNOWN",
+"NO_MSG",
+"SERVICE_USED",
+"TECH_ERROR",
+"STILL_REMAINS_ABOS",
+"INBOX_FULL"};
+
+
+void * Alice(void * arg)
+{
+    char dec[]="";
+    int ret;
+    ret = initMsg();
+    printf("%sinit: %s\n",dec,corresp_errors[ret]);
+
+
+    pthread_exit(0);
+}
+
+void * Bob(void * arg)
+{
+    char dec[]="\t\t";
+    int ret;
+    ret = initMsg();
+    printf("%sinit: %s\n",dec,corresp_errors[ret]);
+
+
+
+    pthread_exit(0);
+}
+
+void * Charlie(void * arg)
+{
+    char dec[]="\t\t\t\t";
+    int ret;
+    ret = initMsg();
+    printf("%sinit: %s\n",dec,corresp_errors[ret]);
+
+
+
+    pthread_exit(0);
+}
+
+
+int main(void)
+{
+	pthread_t thread_Alice, thread_Bob, thread_Charlie;
+	if(pthread_create(&thread_Alice,NULL,Alice,NULL)!=0)			// creation thread entrée
+	{
+		perror("creation thread Alice\n");
+		exit(1);
+	}
+
+	if(pthread_create(&thread_Bob,NULL,Bob,NULL)!=0)				// creation thread sortir
+	{
+		perror("creation thread Bob\n");
+		exit(1);
+	}
+
+	if(pthread_create(&thread_Charlie,NULL,Charlie,NULL)!=0)			// creation thread entrée
+	{
+		perror("creation thread Charlie\n");
+		exit(1);
+	}
+
+	pthread_join(thread_Alice,NULL);
+	pthread_join(thread_Bob,NULL);
+	pthread_join(thread_Charlie,NULL);
+	printf("Fin Main\n");
+	return 0;
+}
+
+
+
+
+
+
+/*
 int main()
 {
     int ret;
@@ -87,3 +172,4 @@ int main()
     printf("Valeur de retour fin: %d\n",ret);
     return 0;
 }
+*/
