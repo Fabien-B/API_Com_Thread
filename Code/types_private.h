@@ -23,6 +23,7 @@ extern communication * _com_abo;                    //utilisé à l'abonnement
 extern pthread_t * _thread_gest;                   	//est à NULL si le gestionnaire n'est pas lancé
 extern int _abo_traite;
 extern int fin;
+extern int service_ready;
 
 void * gestionnaire(void * arg);
 int handleSend(messagerie * tab, int nb_messageries, int id_sender);

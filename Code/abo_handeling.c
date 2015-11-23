@@ -9,7 +9,7 @@
 int aboMsg(communication * my_com, int id)
 {
 
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }
@@ -67,7 +67,7 @@ int aboMsg(communication * my_com, int id)
 
 int desaboMsg(communication * mycom)
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }
@@ -110,7 +110,7 @@ mycom->operation = NO_OP;
 
 int getNbAbo(int * nb)
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }
@@ -157,7 +157,7 @@ int getNbAbo(int * nb)
 
 int isAbo(int id, int * result)
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }

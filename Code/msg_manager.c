@@ -8,7 +8,7 @@
 
 int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }
@@ -58,7 +58,7 @@ int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
 
 int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur pointeur sur message -> on modifie le pointeur sur message.
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }
@@ -210,7 +210,7 @@ int handleGetNbMsg(messagerie * mess)
 
 int getNbMsg(communication * mycom, int* nb_msg)
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }

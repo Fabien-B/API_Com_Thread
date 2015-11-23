@@ -13,6 +13,7 @@ pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;     //mutex utilisé pou
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;   //condition pour sortir le gestionnaire de sa torpeur
 communication * _com_abo;                                   //utilisé à l'abonnement
 pthread_t * _thread_gest = NULL;                            //est à NULL si le gestionnaire n'est pas lancé
+int service_ready = 0;
 int _abo_traite = 0;                                        //est à 0 si un abonnement est en cours, ou le lancement du gestionnaire
 int fin = 0;
 

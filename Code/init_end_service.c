@@ -11,6 +11,10 @@ int initMsg()
 {
     if(_thread_gest != NULL) // != NULL : déja lancé
     {
+        while(service_ready==0)
+        {
+            usleep(10);     //service en cours de lancement dans un autre thread, on attend qu'il soit vraiment lancé...
+        }
         return ALREADY_LAUNCH;
     }
 
@@ -33,6 +37,7 @@ int initMsg()
         pthread_mutex_unlock(&_mutex_abo);    //le challenge : pouvoir prendre le mutex, et que _abo_traite soit à 1.
 
     }
+    service_ready = 1;      //le service est maintenant lancé ! (il attend dans le wait)
     return SUCCESS;
 }
 
@@ -41,7 +46,7 @@ int initMsg()
 
 int finMsg(int force)
 {
-    if(_thread_gest==NULL)
+    if(service_ready==0)
     {
         return NO_SERVICE;
     }
@@ -81,6 +86,7 @@ int finMsg(int force)
     _com_abo = NULL;
     int ret = my_com.retour;
     my_com.operation = NO_OP;
+    service_ready=0;
     pthread_mutex_unlock(&_mutex_abo);
     return ret;                 //retourne le code renvoyé par le gestionnaire
 
