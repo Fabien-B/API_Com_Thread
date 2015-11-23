@@ -25,6 +25,8 @@ void * Alice(void * arg)
     int ret;
     ret = initMsg();
     printf("%sinit: %s\n",dec,corresp_errors[ret]);
+    int res;
+    isAbo(5,&res);
 
 
     pthread_exit(0);
@@ -37,6 +39,8 @@ void * Bob(void * arg)
     ret = initMsg();
     printf("%sinit: %s\n",dec,corresp_errors[ret]);
 
+    int res;
+    isAbo(5,&res);
 
 
     pthread_exit(0);
@@ -49,6 +53,8 @@ void * Charlie(void * arg)
     ret = initMsg();
     printf("%sinit: %s\n",dec,corresp_errors[ret]);
 
+    int res;
+    isAbo(5,&res);
 
 
     pthread_exit(0);
