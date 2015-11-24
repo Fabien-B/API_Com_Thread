@@ -58,8 +58,8 @@ typedef enum operations {
     ISABO,              //5
     GETNBABO,           //6
     CLOSESERVICE,       //7
-    CLOSESERVICE_FORCED,//11
-    ABO                 //12
+    CLOSESERVICE_FORCED,//8
+    ABO                 //9
 } operations;
 
 #endif // API_COM_H_INCLUDED
