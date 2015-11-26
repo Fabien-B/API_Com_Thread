@@ -16,6 +16,7 @@ pthread_t * _thread_gest = NULL;                            //est à NULL si le 
 int service_ready = 0;
 int _abo_traite = 0;                                        //est à 0 si un abonnement est en cours, ou le lancement du gestionnaire
 int fin = 0;
+int _nb_max_abo = NB_ABO_MAX;
 
 void * gestionnaire(void * arg)
 {
