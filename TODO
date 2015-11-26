@@ -1,3 +1,4 @@
 Supprimier l'utilisation de la variable globale abo_traité
 remplacer fin par _fin
 remplacer service_ready par _service_ready
+broadcast
