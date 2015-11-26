@@ -24,6 +24,7 @@ extern pthread_t * _thread_gest;                   	//est à NULL si le gestionn
 extern int _abo_traite;
 extern int fin;
 extern int service_ready;
+extern int _nb_max_abo
 
 void * gestionnaire(void * arg);
 int handleSend(messagerie * tab, int nb_messageries, int id_sender);
