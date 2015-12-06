@@ -24,10 +24,12 @@ void * Alice(void * arg)
     char dec[]="";
     int ret;
     ret = initMsg();
-    printf("%sinit: %s\n",dec,corresp_errors[ret]);
-    int res;
-    isAbo(5,&res);
-
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
+    //int res;
+    //isAbo(5,&res);
+    communication com;
+    ret = aboMsg(&com,5);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
 
     pthread_exit(0);
 }
@@ -37,10 +39,13 @@ void * Bob(void * arg)
     char dec[]="\t\t";
     int ret;
     ret = initMsg();
-    printf("%sinit: %s\n",dec,corresp_errors[ret]);
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
 
     int res;
     isAbo(5,&res);
+    /*communication com;
+    ret = aboMsg(&com,15);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
 
 
     pthread_exit(0);
@@ -51,10 +56,13 @@ void * Charlie(void * arg)
     char dec[]="\t\t\t\t";
     int ret;
     ret = initMsg();
-    printf("%sinit: %s\n",dec,corresp_errors[ret]);
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
 
     int res;
     isAbo(5,&res);
+    /*communication com;
+    ret = aboMsg(&com,5);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
 
 
     pthread_exit(0);

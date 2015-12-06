@@ -16,6 +16,7 @@ int aboMsg(communication * my_com, int id)
 
     int abo_state;
     isAbo(id,&abo_state);
+    printf("aaabbbooo\n");
     if(abo_state)
     {
         return ID_IN_USE;
