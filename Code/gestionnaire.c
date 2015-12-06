@@ -10,6 +10,7 @@
 #include <sys/time.h>
 
 pthread_mutex_t _mutex_abo = PTHREAD_MUTEX_INITIALIZER;     //mutex utilisé pour _com_abo, _abo_traite ( et _client_signal ?)
+pthread_mutex_t _mutex_clients = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t _client_signal = PTHREAD_COND_INITIALIZER;   //condition pour sortir le gestionnaire de sa torpeur
 communication * _com_abo;                                   //utilisé à l'abonnement
 pthread_t * _thread_gest = NULL;                            //est à NULL si le gestionnaire n'est pas lancé

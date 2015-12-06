@@ -40,6 +40,9 @@ int aboMsg(communication * my_com, int id)
     {
         if(_abo_traite == 1)    //pas d'abonnement en cours, on y va !
         {
+
+pthread_mutex_lock(&_mutex_clients);
+
             pthread_mutex_lock(&_mutex_abo);
             abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
             _abo_traite = 0;    //indique un abonnement en cours. le gestionnaire le remettra a 1.
@@ -52,6 +55,7 @@ int aboMsg(communication * my_com, int id)
                 pthread_cond_wait(_com_abo->signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
             }
             int ret = _com_abo->retour;
+pthread_mutex_unlock(&_mutex_clients);
             pthread_mutex_unlock(&_mutex_abo);
             //_com_abo = NULL;
             return ret;                   //retourne le code renvoyé par le gestionnaire
@@ -138,6 +142,7 @@ int getNbAbo(int * nb)
     }
     my_com.retour = -1;
 
+    pthread_mutex_lock(&_mutex_clients);
     pthread_mutex_lock(&_mutex_abo);
     _com_abo = &my_com; //mise à dispo de ma struct communication.
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
@@ -146,6 +151,7 @@ int getNbAbo(int * nb)
         pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
     }
     _com_abo = NULL;
+    pthread_mutex_unlock(&_mutex_clients);
     int ret = my_com.retour;
     int * nb_abo = my_com.contenu;
     *nb = *nb_abo;
@@ -187,6 +193,7 @@ int isAbo(int id, int * result)
     *data = id;
     my_com.retour = -1;
 
+    pthread_mutex_lock(&_mutex_clients);
     pthread_mutex_lock(&_mutex_abo);
     _com_abo = &my_com; 			//mise à dispo de ma struct communication.
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
@@ -195,9 +202,11 @@ int isAbo(int id, int * result)
         pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
     }
     _com_abo = NULL;
+    pthread_mutex_unlock(&_mutex_clients);
     int ret = my_com.retour;
     *result = *data;
     free(my_com.contenu);
     pthread_mutex_unlock(&_mutex_abo);
     return ret;                   //retourne le code renvoyé par le gestionnaire
 }
+

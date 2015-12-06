@@ -18,13 +18,14 @@ typedef struct messagerie {
 
 
 extern pthread_mutex_t _mutex_abo;     				//mutex utilisé pour _com_abo, _abo_traite ( et _client_signal ?)
+extern pthread_mutex_t _mutex_clients;
 extern pthread_cond_t _client_signal;   			//condition pour sortir le gestionnaire de sa torpeur
 extern communication * _com_abo;                    //utilisé à l'abonnement
 extern pthread_t * _thread_gest;                   	//est à NULL si le gestionnaire n'est pas lancé
 extern int _abo_traite;
 extern int fin;
 extern int service_ready;
-extern int _nb_max_abo
+extern int _nb_max_abo;
 
 void * gestionnaire(void * arg);
 int handleSend(messagerie * tab, int nb_messageries, int id_sender);
