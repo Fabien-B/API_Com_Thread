@@ -9,38 +9,45 @@
 
 int initMsg()
 {
+    pthread_mutex_lock(&_mutex_abo);
+    int* serv_ready = &service_ready;
+
     if(_thread_gest != NULL) // != NULL : déja lancé
     {
-        while(service_ready==0)
+        int ok=0;
+        while(!ok)
         {
+            pthread_mutex_unlock(&_mutex_abo);
             usleep(10);     //service en cours de lancement dans un autre thread, on attend qu'il soit vraiment lancé...
+            pthread_mutex_lock(&_mutex_abo);
+            ok = service_ready;
         }
+        pthread_mutex_unlock(&_mutex_abo);
         return ALREADY_LAUNCH;
     }
 
-    pthread_t thread_gestionnaire;          //on déclare un pthread_t
-    _thread_gest = &thread_gestionnaire;    //et on le donne a notre variable globale
 
-    pthread_mutex_lock(&_mutex_abo);
+    _thread_gest = malloc(sizeof(pthread_t));
 
-//if (pthread_create(_thread_gest, NULL, gestionnaire, NULL)!=0){
+
     if (pthread_create(_thread_gest, PTHREAD_CREATE_JOINABLE, gestionnaire, NULL)!=0){
         printf("erreur creation thread gestionnaire\n");
         return INIT_ERROR; //TECH_ERROR
     }
-    pthread_mutex_unlock(&_mutex_abo);
 
     while(_abo_traite == 0)     //si on arrive vite, on attend que le gestionnaire soit en régime de croisière.
     {
+        pthread_mutex_unlock(&_mutex_abo);
         usleep(1000);
-        pthread_mutex_lock(&_mutex_abo);
-        pthread_mutex_unlock(&_mutex_abo);    //le challenge : pouvoir prendre le mutex, et que _abo_traite soit à 1.
+        pthread_mutex_lock(&_mutex_abo);    //le challenge : pouvoir prendre le mutex, et que _abo_traite soit à 1.
 
     }
+
     service_ready = 1;      //le service est maintenant lancé ! (il attend dans le wait)
+
+    pthread_mutex_unlock(&_mutex_abo);
     return SUCCESS;
 }
-
 
 
 
