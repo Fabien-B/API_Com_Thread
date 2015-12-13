@@ -97,5 +97,6 @@ int handleIsAbo(messagerie * tab, int * nb_messageries)
         pthread_mutex_unlock(tab[i].client->mutex);
     }
     *data = result;
+    _abo_traite = 1;    //demande traitée, on peut en faire d'autre !
     return SUCCESS;
 }

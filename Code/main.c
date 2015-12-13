@@ -26,15 +26,18 @@ void * Alice(void * arg)
     int ret;
     ret = initMsg();
 pthread_mutex_lock(&mut_print);
-printf("%s init: %s\n",dec,corresp_errors[ret]);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
-    //int res;
-    //isAbo(5,&res);
-    //usleep(10000);
+
+    int res;
+    isAbo(5,&res);
+
     communication com;
     ret = aboMsg(&com,5);
-//    printf("%s abo: %s\n",dec,corresp_errors[ret]);
- //usleep(50000);
+    pthread_mutex_lock(&mut_print);
+    printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
+
     desaboMsg(&com);
     pthread_exit(0);
 }
@@ -48,14 +51,16 @@ pthread_mutex_lock(&mut_print);
 printf("%s init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 
-    //int res;
-    //isAbo(5,&res);
-    communication com;
-   // ret = aboMsg(&com,8);
-    /*ret = aboMsg(&com,15);
-    printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
+    int res;
+    isAbo(5,&res);
 
-//desaboMsg(&com);
+    communication com;
+    ret = aboMsg(&com,15);
+    pthread_mutex_lock(&mut_print);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
+
+desaboMsg(&com);
     pthread_exit(0);
 }
 

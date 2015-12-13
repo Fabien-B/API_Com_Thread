@@ -39,35 +39,21 @@ int aboMsg(communication * my_com, int id)
     my_com->client_id = id;
     my_com->retour = -1;
 
-	int abo_ok = 0;
-	while(abo_ok == 0)						// Si l'ancienne demande d'abonnement n'est pas prise en compte ont attend
-    {
 
+pthread_mutex_lock(&_mutex_clients);        //autorise une opération client
         pthread_mutex_lock(&_mutex_abo);
-        if(_abo_traite == 1)    //pas d'abonnement en cours, on y va !
+        _com_abo = my_com; //mise à dispo de ma struct communication.
+        _com_abo->operation = ABO;
+        pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+        while(_com_abo->retour == -1)              //attente d'un signal venant du gestionnaire
         {
-
-pthread_mutex_lock(&_mutex_clients);
-
-            abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
-            _abo_traite = 0;    //indique un abonnement en cours. le gestionnaire le remettra a 1.
-            //abonnement
-            _com_abo = my_com; //mise à dispo de ma struct communication.
-            _com_abo->operation = ABO;
-            pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-            while(_com_abo->retour == -1)              //attente d'un signal venant du gestionnaire
-            {
-                pthread_cond_wait(_com_abo->signal_gestionnaire, &_mutex_abo);
-            }
-            int ret = _com_abo->retour;
-            _com_abo = NULL;
-pthread_mutex_unlock(&_mutex_clients);
-            pthread_mutex_unlock(&_mutex_abo);
-            return ret;                   //retourne le code renvoyé par le gestionnaire
+            pthread_cond_wait(_com_abo->signal_gestionnaire, &_mutex_abo);
         }
+        int ret = _com_abo->retour;
+        _com_abo = NULL;
         pthread_mutex_unlock(&_mutex_abo);
-        usleep(1000);
-    }
+pthread_mutex_unlock(&_mutex_clients);
+        return ret;                   //retourne le code renvoyé par le gestionnaire
 
     return TECH_ERROR;
 }
@@ -199,24 +185,22 @@ int isAbo(int id, int * result)
     my_com.retour = -1;
 
     pthread_mutex_lock(&_mutex_clients);
-    pthread_mutex_lock(&_mutex_abo);
+                pthread_mutex_lock(&_mutex_abo);
+                _com_abo = &my_com; 			//mise à dispo de ma struct communication.
+                pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
+                while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
+                {
+                    pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
+                }
+                _com_abo = NULL;
+                int ret = my_com.retour;
+                *result = *data;
+                free(my_com.contenu);
+                pthread_mutex_unlock(&_mutex_abo);
+    pthread_mutex_unlock(&_mutex_clients);      //opération terminée
+                return ret;                   //retourne le code renvoyé par le gestionnaire
 
-    if(_com_abo!=NULL)
-    {
-        return TECH_ERROR;
-    }
-    _com_abo = &my_com; 			//mise à dispo de ma struct communication.
-    pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-    while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
-    {
-        pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
-    }
-    _com_abo = NULL;
-    pthread_mutex_unlock(&_mutex_clients);
-    int ret = my_com.retour;
-    *result = *data;
-    free(my_com.contenu);
-    pthread_mutex_unlock(&_mutex_abo);
-    return ret;                   //retourne le code renvoyé par le gestionnaire
+
+    return TECH_ERROR;
 }
 
