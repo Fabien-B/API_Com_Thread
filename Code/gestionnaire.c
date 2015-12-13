@@ -24,7 +24,7 @@ void * gestionnaire(void * arg)
     pthread_mutex_lock(&_mutex_abo);    				//lock mutex pour ne rien faire tant qu'on est pas en croisière
 
     int nb_messageries = 0;
-    messagerie tab[NB_ABO_MAX+1];     					//crée les messageries
+    messagerie tab[NB_ABO_MAX];     					//crée les messageries
 
     _abo_traite = 1;                					//variable pour la vérification de la phase croisière
     pthread_cond_wait(&_client_signal, &_mutex_abo);    //attente d'un signal (avec unlock automatique du mutex, puis lock à la sortie)
@@ -35,6 +35,7 @@ void * gestionnaire(void * arg)
     {
         //ACTIONS (switch case)!
         int ret = -1;
+
         switch(_com_abo->operation)
         {
             case ABO:
@@ -53,6 +54,9 @@ void * gestionnaire(void * arg)
                 ret = close_service(1);
                 break;
         }
+pthread_mutex_lock(&mut_print);
+printf("coucou!\n");
+pthread_mutex_unlock(&mut_print);
         _com_abo->operation = NO_OP;
         _com_abo->retour = ret;
         pthread_cond_signal(_com_abo->signal_gestionnaire);

@@ -87,11 +87,13 @@ int handleIsAbo(messagerie * tab, int * nb_messageries)
     int * data = _com_abo->contenu;
     for(i=0;i<*nb_messageries;i++) //parcours liste abo pour vérif id demandé.
     {
-        pthread_mutex_lock(tab[i].client->mutex);       //est-ce bien utile ? Ce n'est que de la lecture...
+        //pthread_mutex_lock(tab[i].client->mutex);       //est-ce bien utile ? Ce n'est que de la lecture...
+        pthread_mutex_lock(tab[i].client->mutex);
         if(tab[i].client->client_id == *data)
         {
             result = 1;
         }
+        //pthread_mutex_unlock(tab[i].client->mutex);
         pthread_mutex_unlock(tab[i].client->mutex);
     }
     *data = result;

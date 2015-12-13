@@ -27,6 +27,9 @@ extern int fin;
 extern int service_ready;
 extern int _nb_max_abo;
 
+extern pthread_mutex_t mut_print;
+
+
 void * gestionnaire(void * arg);
 int handleSend(messagerie * tab, int nb_messageries, int id_sender);
 int handleAbo(messagerie * tab, int * nb_messageries);

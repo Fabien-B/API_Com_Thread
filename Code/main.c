@@ -18,19 +18,24 @@ char* corresp_errors[] = {"SUCCESS",
 "STILL_REMAINS_ABOS",
 "INBOX_FULL"};
 
+pthread_mutex_t mut_print = PTHREAD_MUTEX_INITIALIZER;
 
 void * Alice(void * arg)
 {
     char dec[]="";
     int ret;
     ret = initMsg();
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_lock(&mut_print);
+printf("%s init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
     //int res;
     //isAbo(5,&res);
+    //usleep(10000);
     communication com;
     ret = aboMsg(&com,5);
-    printf("%s abo: %s\n",dec,corresp_errors[ret]);
-
+//    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+ //usleep(50000);
+    desaboMsg(&com);
     pthread_exit(0);
 }
 
@@ -39,15 +44,18 @@ void * Bob(void * arg)
     char dec[]="\t\t";
     int ret;
     ret = initMsg();
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_lock(&mut_print);
+printf("%s init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
 
-    int res;
-    isAbo(5,&res);
-    /*communication com;
-    ret = aboMsg(&com,15);
+    //int res;
+    //isAbo(5,&res);
+    communication com;
+   // ret = aboMsg(&com,8);
+    /*ret = aboMsg(&com,15);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
 
-
+//desaboMsg(&com);
     pthread_exit(0);
 }
 
@@ -56,12 +64,15 @@ void * Charlie(void * arg)
     char dec[]="\t\t\t\t";
     int ret;
     ret = initMsg();
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_lock(&mut_print);
+printf("%s init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
 
     int res;
+    usleep(10000);
     isAbo(5,&res);
-    /*communication com;
-    ret = aboMsg(&com,5);
+    communication com;
+    /*ret = aboMsg(&com,5);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
 
 
