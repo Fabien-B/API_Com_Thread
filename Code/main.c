@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
+#define pas 100000
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
 "INIT_ERROR",
@@ -33,10 +34,80 @@ pthread_mutex_unlock(&mut_print);
     isAbo(5,&res);
 
     communication com;
-    ret = aboMsg(&com,5);
+    ret = aboMsg(&com,1);
     pthread_mutex_lock(&mut_print);
     printf("%s  abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
+    int it = 0;
+    int a = 0;
+    double pi;
+
+    a = it * pas;
+    it++;
+    ret = 8;
+    while(ret == 8)
+    {
+    ret = sendMsg(&com,2,&a, sizeof(a));
+    }
+
+    a = it * pas;
+    it++;
+    ret = 8;
+    while(ret == 8)
+    {
+    ret = sendMsg(&com,3,&a, sizeof(a));
+    }
+
+    a = it * pas;
+    it++;
+    ret = 8;
+    while(ret == 8)
+    {
+    ret = sendMsg(&com,4,&a, sizeof(a));
+    }
+
+    while(a < 1000000)
+    {
+        int dest = 0;
+        message * mymess;
+        ret = recvMsgBlock(&com,&mymess);
+        if(ret==0)
+        {
+            double * somme = mymess->contenu;
+            pi += *somme;
+            dest = mymess->expid;
+            free(mymess->contenu);
+            free(mymess);
+        }
+        usleep(100000);
+        printf("pi = %lf\n",4*pi);
+        a = it * pas;
+        it++;
+        ret = 8;
+        while(ret == 8)
+        {
+            ret = sendMsg(&com,dest,&a, sizeof(a));
+        }
+
+    }
+    a = -1;
+    ret = 8;
+    while(ret == 8)
+    {
+    ret = sendMsg(&com,2,&a, sizeof(a));
+    }
+    ret = 8;
+    while(ret == 8)
+    {
+    ret = sendMsg(&com,3,&a, sizeof(a));
+    }
+    ret = 8;
+    while(ret == 8)
+    {
+    ret = sendMsg(&com,4,&a, sizeof(a));
+    }
+
+    printf("desabo thread Alice\n");
     desaboMsg(&com);
     pthread_exit(0);
 }
@@ -46,20 +117,57 @@ void * Bob(void * arg)
     char dec[]="\t\t";
     int ret;
     ret = initMsg();
-pthread_mutex_lock(&mut_print);
-printf("%s init: %s\n",dec,corresp_errors[ret]);
-pthread_mutex_unlock(&mut_print);
-
-    int res;
-    isAbo(5,&res);
+    pthread_mutex_lock(&mut_print);
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
 
     communication com;
-    ret = aboMsg(&com,15);
+    ret = aboMsg(&com,2);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
 
-desaboMsg(&com);
+    int i = 1;
+    int j = 0;
+    int mod = 0;
+    double somme = 0;
+    double val = 0;
+    double den = 0;
+    while( i != -1)
+    {
+        message * mymess;
+        ret = recvMsgBlock(&com,&mymess);
+        if(ret==0)
+        {
+            int* aq = mymess->contenu;
+            i = *aq;
+            free(mymess->contenu);
+            free(mymess);
+        }
+
+        if(i == -1){break;}
+        else
+        {
+        j = 0;
+        for(j=i+1; j< i + pas; j++)
+            {
+                if (j%2){mod = 1;}
+                else{mod = -1;}
+                den = 2 * (j-1);
+                den ++;
+                val = mod * (1/den);
+                somme = somme + val;
+            }
+        }
+        ret = 8;
+        while(ret != 0)
+        {
+        ret = sendMsg(&com,1,&somme, sizeof(somme));
+        }
+        somme = 0;
+    }
+    printf("desabo thread Bob\n");
+    desaboMsg(&com);
     pthread_exit(0);
 }
 
@@ -68,26 +176,123 @@ void * Charlie(void * arg)
     char dec[]="\t\t\t\t";
     int ret;
     ret = initMsg();
-pthread_mutex_lock(&mut_print);
-printf("%s init: %s\n",dec,corresp_errors[ret]);
-pthread_mutex_unlock(&mut_print);
+    pthread_mutex_lock(&mut_print);
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
 
-    int res;
-    //isAbo(5,&res);
-    /*communication com;
-    ret = aboMsg(&com,25);
-pthread_mutex_lock(&mut_print);
+    communication com;
+    ret = aboMsg(&com,3);
+    pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
-pthread_mutex_unlock(&mut_print);
-    desaboMsg(&com);*/
+    pthread_mutex_unlock(&mut_print);
 
+int i = 1;
+    int j = 0;
+    int mod = 0;
+    double somme = 0;
+    double val = 0;
+    double den = 0;
+    while( i != -1)
+    {
+        message * mymess;
+        ret = recvMsgBlock(&com,&mymess);
+        if(ret==0)
+        {
+            int* aq = mymess->contenu;
+            i = *aq;
+            free(mymess->contenu);
+            free(mymess);
+        }
+
+        if(i == -1){break;}
+        else
+        {
+        j = 0;
+        for(j=i+1; j< i + pas; j++)
+            {
+                if (j%2){mod = 1;}
+                else{mod = -1;}
+                den = 2 * (j-1);
+                den ++;
+                val = mod * (1/den);
+                somme = somme + val;
+            }
+        }
+        ret = 8;
+        while(ret != 0)
+        {
+        ret = sendMsg(&com,1,&somme, sizeof(somme));
+        }
+        somme = 0;
+    }
+    printf("desabo thread Chalie\n");;
+
+    desaboMsg(&com);
+    pthread_exit(0);
+}
+
+void * Dingo(void * arg)
+{
+    char dec[]="\t\t\t\t\t\t";
+    int ret;
+    ret = initMsg();
+    pthread_mutex_lock(&mut_print);
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
+
+    communication com;
+    ret = aboMsg(&com,4);
+    pthread_mutex_lock(&mut_print);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
+int i = 1;
+    int j = 0;
+    int mod = 0;
+    double somme = 0;
+    double val = 0;
+    double den = 0;
+    while( i != -1)
+    {
+        message * mymess;
+        ret = recvMsgBlock(&com,&mymess);
+        if(ret==0)
+        {
+            int* aq = mymess->contenu;
+            i = *aq;
+            free(mymess->contenu);
+            free(mymess);
+        }
+
+        if(i == -1){break;}
+        else
+        {
+        j = 0;
+        for(j=i+1; j< i + pas; j++)
+            {
+                if (j%2){mod = 1;}
+                else{mod = -1;}
+                den = 2 * (j-1);
+                den ++;
+                val = mod * (1/den);
+                somme = somme + val;
+            }
+        }
+        ret = 8;
+        while(ret != 0)
+        {
+        ret = sendMsg(&com,1,&somme, sizeof(somme));
+        }
+        somme = 0;
+    }
+    printf("desabo thread Dingo\n");;
+    desaboMsg(&com);
     pthread_exit(0);
 }
 
 
 int main(void)
 {
-	pthread_t thread_Alice, thread_Bob, thread_Charlie;
+	pthread_t thread_Alice, thread_Bob, thread_Charlie, thread_Dingo;
 	if(pthread_create(&thread_Alice,NULL,Alice,NULL)!=0)			// creation thread entrée
 	{
 		perror("creation thread Alice\n");
@@ -106,9 +311,15 @@ int main(void)
 		exit(1);
 	}
 
+    if(pthread_create(&thread_Dingo,NULL,Dingo,NULL)!=0)			// creation thread entrée
+	{
+		perror("creation thread Dingo\n");
+		exit(1);
+	}
 	pthread_join(thread_Alice,NULL);
 	pthread_join(thread_Bob,NULL);
 	pthread_join(thread_Charlie,NULL);
+	pthread_join(thread_Dingo,NULL);
 	printf("Fin Main\n");
 	return 0;
 }

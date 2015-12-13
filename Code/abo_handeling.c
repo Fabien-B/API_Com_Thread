@@ -5,10 +5,10 @@
 #include "types_private.h"
 #include "api_com.h"
 
-#define DEBUGABOMSG
-#define DEBUGDESABOMSGMSG
-#define DEBUGGETNBABO
-#define DEBUGISABO
+//#define DEBUGABOMSG
+//#define DEBUGDESABOMSGMSG
+//#define DEBUGGETNBABO
+//#define DEBUGISABO
 
 int aboMsg(communication * my_com, int id)
 {

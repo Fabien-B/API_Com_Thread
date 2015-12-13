@@ -6,9 +6,14 @@
 #include "api_com.h"
 #include <string.h>
 
+//#define DEBUGSENDMSG
+//#define DEBUGRECVMSG
+//#define DEBUGRECVMSGBLOCK
 int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
 {
+#ifdef DEBUGSENDMSG
     printf("\n **** \n %zu envoi un message\n **** \n", pthread_self());
+#endif
     if(service_ready==0)
     {
         return NO_SERVICE;
@@ -59,7 +64,9 @@ int sendMsg(communication * mycom, int id_dest, void * contenu, int data_size)
 
 int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur pointeur sur message -> on modifie le pointeur sur message.
 {
+#ifdef DEBUGRECVMSG
     printf("\n **** \n %zu reçois un message\n **** \n", pthread_self());
+#endif
 
     if(service_ready==0)
     {
@@ -97,7 +104,9 @@ int recvMsg(communication * mycom, message **msg)   //**msg : pointeur sur point
 
 int recvMsgBlock(communication * mycom, message **msg)
 {
+#ifdef DEBUGRECVMSGBLOCK
     printf("\n **** \n %zu reçois un message block\n **** \n", pthread_self());
+#endif
     int ret;
     do
     {
