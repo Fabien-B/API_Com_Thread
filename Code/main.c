@@ -37,7 +37,6 @@ pthread_mutex_unlock(&mut_print);
     pthread_mutex_lock(&mut_print);
     printf("%s  abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
-
     desaboMsg(&com);
     pthread_exit(0);
 }
@@ -74,12 +73,13 @@ printf("%s init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 
     int res;
-    usleep(10000);
-    isAbo(5,&res);
-    communication com;
-    /*ret = aboMsg(&com,5);
-    printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
-
+    //isAbo(5,&res);
+    /*communication com;
+    ret = aboMsg(&com,25);
+pthread_mutex_lock(&mut_print);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+    desaboMsg(&com);*/
 
     pthread_exit(0);
 }

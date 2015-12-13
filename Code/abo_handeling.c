@@ -8,7 +8,7 @@
 
 int aboMsg(communication * my_com, int id)
 {
-
+    printf("\n **** \n le thread %zu s'abonne \n **** \n",pthread_self());
     pthread_mutex_lock(&_mutex_abo);
     if(service_ready==0)
     {
@@ -17,8 +17,8 @@ int aboMsg(communication * my_com, int id)
     }
     pthread_mutex_unlock(&_mutex_abo);
 
-    int abo_state;
-    isAbo(id,&abo_state);
+    int abo_state = 0;
+    //isAbo(id,&abo_state);
     if(abo_state)
     {
         return ID_IN_USE;
@@ -133,7 +133,9 @@ int getNbAbo(int * nb)
     }
     my_com.retour = -1;
 
-    pthread_mutex_lock(&_mutex_clients);
+    printf("\nprise du mutex_clients\n");
+        pthread_mutex_lock(&_mutex_clients);
+        printf("mutex_clients pris par le thread %zu fct getNbAbo\n", pthread_self());
     pthread_mutex_lock(&_mutex_abo);
     _com_abo = &my_com; //mise à dispo de ma struct communication.
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire

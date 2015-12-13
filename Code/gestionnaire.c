@@ -54,9 +54,9 @@ void * gestionnaire(void * arg)
                 ret = close_service(1);
                 break;
         }
-pthread_mutex_lock(&mut_print);
+/*pthread_mutex_lock(&mut_print);
 printf("coucou!\n");
-pthread_mutex_unlock(&mut_print);
+pthread_mutex_unlock(&mut_print);*/
         _com_abo->operation = NO_OP;
         _com_abo->retour = ret;
         pthread_cond_signal(_com_abo->signal_gestionnaire);

@@ -7,17 +7,17 @@ all:$(OBJS)
 	$(CC) $(CFLAGS) -o $(BIN) $(OBJS)
 
 abo_handeling.o: abo_handeling.c types_private.h api_com.h
-	$(CC) $(CFLAGS) -c abo_handeling.c
+	$(CC) $(CFLAGS) -g -c abo_handeling.c
 gestionnaire.o: gestionnaire.c types_private.h api_com.h
-	$(CC) $(CFLAGS) -c gestionnaire.c
+	$(CC) $(CFLAGS) -g -c gestionnaire.c
 gest_abo.o: gest_abo.c types_private.h api_com.h
-	$(CC) $(CFLAGS) -c gest_abo.c
+	$(CC) $(CFLAGS) -g -c gest_abo.c
 init_end_service.o: init_end_service.c types_private.h api_com.h
-	$(CC) $(CFLAGS) -c init_end_service.c
+	$(CC) $(CFLAGS) -g -c init_end_service.c
 msg_manager.o: msg_manager.c types_private.h api_com.h
-	$(CC) $(CFLAGS) -c msg_manager.c
+	$(CC) $(CFLAGS) -g -c msg_manager.c
 main.o: main.c api_com.h
-	$(CC) $(CFLAGS) -c main.c
+	$(CC) $(CFLAGS) -g -c main.c
 
 clean: 
 	rm -f  $(BIN) $(OBJS)
