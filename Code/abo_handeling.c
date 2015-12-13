@@ -5,7 +5,7 @@
 #include "types_private.h"
 #include "api_com.h"
 
-#define DEBUGABOMSGMSG
+#define DEBUGABOMSG
 #define DEBUGDESABOMSGMSG
 #define DEBUGGETNBABO
 #define DEBUGISABO
@@ -112,15 +112,15 @@ int desaboMsg(communication * mycom)
 
     mycom->operation = DESABO;
     mycom->retour = -1;
-#ifdef DEBUGDESABOMSG
+#ifdef DEBUGDESABOMSGMSG
     printf("\n **** \n Le thread %zu prend le mutex de sa communication\n **** \n ", pthread_self());
 #endif
     pthread_mutex_lock(mycom->mutex);  //je lock mon mutex pour que le signal ne me soit envoyé que pendant mon wait
-#ifdef DEBUGDESABOMSG
+#ifdef DEBUGDESABOMSGMSG
     printf("\n **** \n Le thread %zu à pris le mutex de sa communication\n **** \n ", pthread_self());
 #endif
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-#ifdef DEBUGDESABOMSG
+#ifdef DEBUGDESABOMSGMSG
     printf("\n **** \n Le thread %zu à envoyer un signal au gestionnaire\n **** \n ", pthread_self());
 #endif
     while(mycom->retour == -1)
@@ -135,11 +135,11 @@ int desaboMsg(communication * mycom)
     {
         return TECH_ERROR;
     }
-#ifdef DEBUGDESABOMSG
+#ifdef DEBUGDESABOMSGMSG
     printf("\n **** \n Le thread %zu détruit le mutex de sa communication\n **** \n ", pthread_self());
 #endif
     pthread_mutex_destroy(mycom->mutex);
-#ifdef DEBUGDESABOMSG
+#ifdef DEBUGDESABOMSGMSG
     printf("\n **** \n Le thread %zu à détruit le mutex de sa communication\n **** \n ", pthread_self());
 #endif
     //pthread_cond_destroy(mycom->signal_gestionnaire);
@@ -233,24 +233,24 @@ int isAbo(int id, int * result)
     int * data = my_com.contenu;
     *data = id;
     my_com.retour = -1;
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu prend le mutex client fct isAbo\n **** \n", pthread_self());
 #endif
     pthread_mutex_lock(&_mutex_clients);
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu à pris le mutex client fct isAbo \n **** \n", pthread_self());
 #endif
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu prend le _mutex_abo fct isAbo\n **** \n", pthread_self());
 #endif
     pthread_mutex_lock(&_mutex_abo);
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu à pris le _mutex_abo fct isAbo \n **** \n", pthread_self());
 #endif
 
                 _com_abo = &my_com; 			//mise à dispo de ma struct communication.
                 pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu à envoyer un signal au gestionnaire fct isAbo\n **** \n", pthread_self());
 #endif
                 while(my_com.retour == -1)              //attente d'un signal venant du gestionnaire
@@ -261,18 +261,18 @@ int isAbo(int id, int * result)
                 int ret = my_com.retour;
                 *result = *data;
                 free(my_com.contenu);
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu unlock le mutex_abo fct isAbo\n **** \n", pthread_self());
 #endif
     pthread_mutex_unlock(&_mutex_abo);
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu à libérer le mutex_abo fct isAbo\n **** \n", pthread_self());
 #endif
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu unlock le mutex_client fct isAbo\n **** \n", pthread_self());
 #endif
         pthread_mutex_unlock(&_mutex_clients); //opération terminée
-#ifdef DEBUGABOMSG
+#ifdef DEBUGISABO
     printf("\n **** \n Le thread %zu à libérer le mutex_client fct isAbo\n **** \n", pthread_self());
 #endif
                 return ret;                   //retourne le code renvoyé par le gestionnaire
