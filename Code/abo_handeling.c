@@ -181,9 +181,7 @@ int getNbAbo(int * nb)
     }
     my_com.retour = -1;
 
-    printf("\nprise du mutex_clients\n");
-        pthread_mutex_lock(&_mutex_clients);
-        printf("mutex_clients pris par le thread %zu fct getNbAbo\n", pthread_self());
+pthread_mutex_lock(&_mutex_clients);
     pthread_mutex_lock(&_mutex_abo);
     _com_abo = &my_com; //mise à dispo de ma struct communication.
     pthread_cond_signal(&_client_signal);   //envoie signal pour le gestionnaire
@@ -192,12 +190,12 @@ int getNbAbo(int * nb)
         pthread_cond_wait(my_com.signal_gestionnaire, &_mutex_abo);   //il communique avec les objets que je lui ai spécifiés.
     }
     _com_abo = NULL;
-    pthread_mutex_unlock(&_mutex_clients);
     int ret = my_com.retour;
     int * nb_abo = my_com.contenu;
     *nb = *nb_abo;
     free(my_com.contenu);
     pthread_mutex_unlock(&_mutex_abo);
+pthread_mutex_unlock(&_mutex_clients);
     return ret;                   //retourne le code renvoyé par le gestionnaire
 }
 
