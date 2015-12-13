@@ -82,6 +82,8 @@ int finMsg(int force)
     }
     my_com.retour = -1;
 
+
+pthread_mutex_lock(&_mutex_clients);
     pthread_mutex_lock(&_mutex_abo);
     fin = 1;
     _com_abo = &my_com; //mise à dispo de ma struct communication.
@@ -95,6 +97,7 @@ int finMsg(int force)
     my_com.operation = NO_OP;
     service_ready=0;
     pthread_mutex_unlock(&_mutex_abo);
+pthread_mutex_unlock(&_mutex_clients);
     return ret;                 //retourne le code renvoyé par le gestionnaire
 
     ///TODO : pthread_join
