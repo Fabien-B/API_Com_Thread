@@ -25,16 +25,18 @@ void * Alice(void * arg)
     char dec[]="";
     int ret;
     ret = initMsg();
-pthread_mutex_lock(&mut_print);
-printf("%s init: %s\n",dec,corresp_errors[ret]);
-pthread_mutex_unlock(&mut_print);
-    //int res;
-    //isAbo(5,&res);
-    //usleep(10000);
+    pthread_mutex_lock(&mut_print);
+    printf("%s init: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
     communication com;
     ret = aboMsg(&com,5);
-//    printf("%s abo: %s\n",dec,corresp_errors[ret]);
- //usleep(50000);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+    ret = 8;
+    while (ret == 8)
+    {
+    int a = 42;
+    ret = sendMsg(&com,15,&a, sizeof(a));
+    }
     desaboMsg(&com);
     pthread_exit(0);
 }
@@ -47,15 +49,24 @@ void * Bob(void * arg)
 pthread_mutex_lock(&mut_print);
 printf("%s init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
-
     //int res;
     //isAbo(5,&res);
     communication com;
    // ret = aboMsg(&com,8);
-    /*ret = aboMsg(&com,15);
-    printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
-
-//desaboMsg(&com);
+    ret = aboMsg(&com,15);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+    message * mymess;
+    sleep(1);
+    ret = recvMsgBlock(&com,&mymess);
+    printf("recv : %d\n", ret);
+    if(ret==0)
+    {
+        int* aq = mymess->contenu;
+        printf("message: %d     recu a %ld\n",*aq,mymess->tv.tv_sec);
+        free(mymess->contenu);
+        free(mymess);
+    }
+    desaboMsg(&com);
     pthread_exit(0);
 }
 
@@ -69,12 +80,13 @@ printf("%s init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 
     int res;
-    usleep(10000);
-    isAbo(5,&res);
-    communication com;
-    /*ret = aboMsg(&com,5);
-    printf("%s abo: %s\n",dec,corresp_errors[ret]);*/
-
+    //isAbo(5,&res);
+    /*communication com;
+    ret = aboMsg(&com,25);
+pthread_mutex_lock(&mut_print);
+    printf("%s abo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+    desaboMsg(&com);*/
 
     pthread_exit(0);
 }

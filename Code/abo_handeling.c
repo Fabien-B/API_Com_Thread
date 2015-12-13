@@ -8,7 +8,7 @@
 
 int aboMsg(communication * my_com, int id)
 {
-
+    printf("\n **** \n le thread %zu s'abonne \n **** \n",pthread_self());
     pthread_mutex_lock(&_mutex_abo);
     if(service_ready==0)
     {
@@ -17,8 +17,8 @@ int aboMsg(communication * my_com, int id)
     }
     pthread_mutex_unlock(&_mutex_abo);
 
-    int abo_state;
-    isAbo(id,&abo_state);
+    int abo_state = 0;
+    //isAbo(id,&abo_state);
     if(abo_state)
     {
         return ID_IN_USE;
@@ -42,13 +42,14 @@ int aboMsg(communication * my_com, int id)
 	int abo_ok = 0;
 	while(abo_ok == 0)						// Si l'ancienne demande d'abonnement n'est pas prise en compte ont attend
     {
-
+        printf("prise du mutex_abo \n");
         pthread_mutex_lock(&_mutex_abo);
+        printf("mutex_abo pris par %zu\n", pthread_self());
         if(_abo_traite == 1)    //pas d'abonnement en cours, on y va !
         {
-
+printf("prise du mutex_clients\n");
 pthread_mutex_lock(&_mutex_clients);
-
+printf("mutex_clients pris par le thread %zu\n", pthread_self());
             abo_ok = 1;         //on peut s'abonner -> pas besoin de refaire la boucle.
             _abo_traite = 0;    //indique un abonnement en cours. le gestionnaire le remettra a 1.
             //abonnement
