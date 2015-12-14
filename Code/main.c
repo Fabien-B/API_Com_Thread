@@ -5,17 +5,19 @@
 #include <pthread.h>
 #define pas 10000
 
-//#define LAUCHSERVICE
+#define LAUCHSERVICE
 //#define PICALC
 //#define TESTMAXABO
 //#define TESTSENDIFNOABO
 //#define TESTSENDTOIDUKNOW
-//#define ABOALICE
-//#define ABOBOB
+#define ABOALICE
+#define ABOBOB
 //#define ABOCHARLIE
 //#define ABODINGO
 //#define TESTGETNBMSG
 //#define TESTDESABO
+#define TESTDESABOWITHMSG // necessite ABOALICE ABOBOB
+
 
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
@@ -54,6 +56,15 @@ pthread_mutex_lock(&mut_print);
 printf("%s  abo: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 #endif // ABOALICE
+
+#ifdef TESTDESABOWITHMSG
+//int * nbmsg;
+//do{
+//ret = getNbMsg(&com, &nbmsg);
+//}while(*nbmsg == 0);
+sleep(5);
+
+#endif // TESTDESABOWITHMSG
 
 #ifdef TESTDESABO
 ret = desaboMsg(&com);
@@ -199,6 +210,17 @@ pthread_mutex_unlock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
 #endif // ABOBOB
+
+#ifdef TESTDESABOWITHMSG
+int a = 10;
+do{
+    ret = sendMsg(&com,2,&a, sizeof(a));
+    pthread_mutex_lock(&mut_print);
+    printf("%s send: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
+}while(ret != INBOX_FULL);
+#endif // TESTDESABOWITHMSG
+
 #ifdef PICALC
     int i = 1;
     int j = 0;
