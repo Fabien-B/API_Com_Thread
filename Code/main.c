@@ -44,40 +44,43 @@ pthread_mutex_unlock(&mut_print);
 
     a = it * pas;
     it++;
-    ret = 8;
-    while(ret == 8)
-    {
+
+    do{
     ret = sendMsg(&com,2,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
     a = it * pas;
     it++;
-    ret = 8;
-    while(ret == 8)
-    {
+    do{
     ret = sendMsg(&com,3,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
     a = it * pas;
     it++;
-    ret = 8;
-    while(ret == 8)
-    {
+    do{
     ret = sendMsg(&com,4,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
     while(a < 10000000)
     {
         int dest = 0;
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {   double * somme = 0;
-            somme = mymess->contenu;
-            pi += *somme;
-            dest = mymess->expid;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+            {
+                somme = mymess->contenu;
+                if (somme != NULL)
+                {
+                pi += *somme;
+                dest = mymess->expid;
+                free(mymess->contenu);
+                free(mymess);
+                }
+
+            }
+            mymess=NULL;
         }
         usleep(10000);
         pthread_mutex_lock(&mut_print);
@@ -85,29 +88,22 @@ pthread_mutex_unlock(&mut_print);
         pthread_mutex_unlock(&mut_print);
         a = it * pas;
         it++;
-        ret = 8;
-        while(ret == 8)
-        {
+        do{
             ret = sendMsg(&com,dest,&a, sizeof(a));
-        }
+        }while(ret != 0);
 
     }
+    printf("\n\t*********** \nCalcul terminé Pi=%.10f\n\n",4*pi);
     a = -1;
-    ret = 8;
-    while(ret == 8)
-    {
+    do{
     ret = sendMsg(&com,2,&a, sizeof(a));
-    }
-    ret = 8;
-    while(ret == 8)
-    {
+    }while(ret != 0);
+    do{
     ret = sendMsg(&com,3,&a, sizeof(a));
-    }
-    ret = 8;
-    while(ret == 8)
-    {
+    }while(ret != 0);
+    do{
     ret = sendMsg(&com,4,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
     printf("desabo thread Alice\n");
     desaboMsg(&com);
@@ -139,12 +135,20 @@ void * Bob(void * arg)
     {
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {
-            int* aq = mymess->contenu;
-            i = *aq;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+                {
+                    int* aq = mymess->contenu;
+                    if(aq !=NULL)
+                    {
+                        i = *aq;
+                        free(mymess->contenu);
+                        free(mymess);
+                    }
+
+                }
+                mymess=NULL;
         }
 
         if(i == -1){break;}
@@ -161,13 +165,12 @@ void * Bob(void * arg)
                 somme = somme + val;
             }
         }
-        ret = 8;
-        while(ret != 0)
+        do
         {
-
         ret = sendMsg(&com,1,&somme, sizeof(somme));
         if (ret ==  12){printf("messagerie pleine\n");}
-        }
+        }while(ret != 0);
+
         somme = 0;
     }
     printf("desabo thread Bob\n");
@@ -200,12 +203,19 @@ int i = 1;
     {
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {
-            int* aq = mymess->contenu;
-            i = *aq;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+                {
+                    int* aq = mymess->contenu;
+                    if(aq !=NULL)
+                    {
+                        i = *aq;
+                        free(mymess->contenu);
+                        free(mymess);
+                    }
+                }
+                mymess=NULL;
         }
 
         if(i == -1){break;}
@@ -223,12 +233,10 @@ int i = 1;
             }
         }
         ret = 8;
-        while(ret != 0)
-        {
-
+        do{
         ret = sendMsg(&com,1,&somme, sizeof(somme));
         if (ret ==  12){printf("messagerie pleine\n");}
-        }
+        }while(ret != 0);
         somme = 0;
     }
     printf("desabo thread Chalie\n");;
@@ -261,12 +269,20 @@ int i = 1;
     {
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {
-            int* aq = mymess->contenu;
-            i = *aq;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+                {
+                    int* aq = mymess->contenu;
+                    if(aq !=NULL)
+                    {
+                        i = *aq;
+                        free(mymess->contenu);
+                        free(mymess);
+                    }
+
+                }
+                mymess=NULL;
         }
 
         if(i == -1){break;}
@@ -283,12 +299,10 @@ int i = 1;
                 somme = somme + val;
             }
         }
-        ret = 8;
-        while(ret != 0)
-        {
+        do{
         ret = sendMsg(&com,1,&somme, sizeof(somme));
         if (ret ==  12){printf("messagerie pleine\n");}
-        }
+        }while(ret != 0);
         somme = 0;
     }
     printf("desabo thread Dingo\n");;
@@ -384,12 +398,13 @@ int main()
     message * mymess;
     ret = recvMsg(&com3,&mymess);
     printf("recv : %d\n", ret);
-    if(ret==0)
+    if(ret==SUCCES)
     {
         int* aq = mymess->contenu;
         printf("message: %d     recu a %ld\n",*aq,mymess->tv.tv_sec);
         free(mymess->contenu);
         free(mymess);
+		mymess=NULL;
     }
 
 	//reception du nombre de message dans notre messagerie
@@ -402,7 +417,7 @@ int main()
     message * mymess2 = NULL;
     ret = recvMsg(&com3,&mymess2);
     printf("recv : %d\n", ret);
-    if(ret==0)
+    if(ret==SUCCES)
     {
         char * chaine = mymess2->contenu;
         printf("message: %s    reçu à %ld\n",chaine,mymess2->tv.tv_sec);
