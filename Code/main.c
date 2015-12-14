@@ -66,22 +66,22 @@ pthread_mutex_unlock(&mut_print);
     ret = sendMsg(&com,4,&a, sizeof(a));
     }
 
-    while(a < 1000000)
+    while(a < 10000000)
     {
         int dest = 0;
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
         if(ret==0)
-        {
-            double * somme = mymess->contenu;
+        {   double * somme = 0;
+            somme = mymess->contenu;
             pi += *somme;
             dest = mymess->expid;
             free(mymess->contenu);
             free(mymess);
         }
-        usleep(100000);
+        usleep(10000);
         pthread_mutex_lock(&mut_print);
-        printf("pi = %lf\n",4*pi);
+        printf("pi = %.10f\n",4*pi);
         pthread_mutex_unlock(&mut_print);
         a = it * pas;
         it++;
