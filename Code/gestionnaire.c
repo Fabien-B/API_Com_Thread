@@ -48,10 +48,10 @@ void * gestionnaire(void * arg)
                 ret = handleIsAbo(tab, &nb_messageries);
                 break;
             case CLOSESERVICE:
-                    ret = close_service(0);
+                    ret = close_service(0,tab,&nb_messageries);
                     break;
             case CLOSESERVICE_FORCED:
-                ret = close_service(1);
+                ret = close_service(1,tab,&nb_messageries);
                 break;
         }
 /*pthread_mutex_lock(&mut_print);
@@ -66,11 +66,8 @@ pthread_mutex_unlock(&mut_print);*/
     {
         fin = 0;
         pthread_mutex_unlock(&_mutex_abo);
-        sleep(1);
-        printf("pthread_exit ici\n");
         pthread_exit(0);
     }
-
     int i;
     for(i=0;i<nb_messageries;i++) //parcours liste abo executer les actions id demandées.
     {
@@ -106,11 +103,20 @@ pthread_mutex_unlock(&mut_print);*/
 }
 
 
-int close_service(int flag)
+int close_service(int flag, messagerie * tab, int * nb_messageries)
 {
-    ///TODO
-    //frees....
+    int res = 0;
+    if(!flag)
+    {
+        if(*nb_messageries > 0)
+            return STILL_REMAINS_ABOS;
 
-    return 789;
+        return SUCCESS;
+    }
+    while(res != NO_ABO)
+    {
+        res = handleDesabo(tab, nb_messageries, 0);
+    }
+    return SUCCESS;
 }
 

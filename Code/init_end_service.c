@@ -95,7 +95,7 @@ pthread_mutex_lock(&_mutex_clients);
     service_ready=0;
     pthread_mutex_unlock(&_mutex_abo);
 
-    //pthread_join(*_thread_gest,NULL);
+    pthread_join(*_thread_gest,NULL);
     _thread_gest = NULL;
     service_ready = 0;
     fin = 0;
