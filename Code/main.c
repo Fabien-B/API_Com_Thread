@@ -5,6 +5,15 @@
 #include <pthread.h>
 
 #define pas 10000
+
+//#define PICALC
+//#define TESTMAXABO
+//#define TESTSENDIFNOABO
+//#define TESTSENDTOIDUKNOW
+//#define ABOBOB
+//#define ABOCHARLIE
+//#define ABODINGO
+
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
 "INIT_ERROR",
@@ -30,14 +39,45 @@ pthread_mutex_lock(&mut_print);
 printf("%s  init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 
-    int res;
-    isAbo(5,&res);
+communication com;
+#ifdef TESTSENDIFNOABO
+int a = 2;
+ret = sendMsg(&com,2,&a, sizeof(a));
+pthread_mutex_lock(&mut_print);
+printf("%s  send: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTSENDIFNOABO
 
-    communication com;
-    ret = aboMsg(&com,1);
-    pthread_mutex_lock(&mut_print);
-    printf("%s  abo: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
+
+ret = aboMsg(&com,1);
+pthread_mutex_lock(&mut_print);
+printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+
+
+#ifdef TESTSENDTOIDUKNOW
+ret = sendMsg(&com,1000,&a, sizeof(a));
+pthread_mutex_lock(&mut_print);
+printf("%s  send: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTSENDTOIDUKNOW
+
+
+#ifdef TESTMAXABO
+    int i =0;
+    communication com[20];
+    for(i=0;i<20;i++)
+    {
+        ret = aboMsg(&com[i],i);
+        pthread_mutex_lock(&mut_print);
+        printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+        pthread_mutex_unlock(&mut_print);
+    }
+#endif // TESTMAXABO
+
+
+
+#ifdef PICALC
     int it = 0;
     int a = 0;
     double pi = 0;
@@ -109,6 +149,7 @@ pthread_mutex_unlock(&mut_print);
     ret = recvMsg(&com,&mymess);
     }while(ret != NO_MSG);
 
+#endif // PICALC
 
     printf("desabo thread Alice\n");
     desaboMsg(&com);
@@ -124,12 +165,14 @@ void * Bob(void * arg)
     printf("%s init: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
 
+#ifdef ABOBOB
     communication com;
     ret = aboMsg(&com,2);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
-
+#endif // ABOBOB
+#ifdef PICALC
     int i = 1;
     int j = 0;
     int mod = 0;
@@ -178,9 +221,12 @@ void * Bob(void * arg)
 
         somme = 0;
     }
+#endif // PICALC
+#ifdef ABOBOB
     printf("desabo thread Bob\n");
     desaboMsg(&com);
     pthread_exit(0);
+#endif // ABOBOB
 }
 
 void * Charlie(void * arg)
@@ -192,12 +238,15 @@ void * Charlie(void * arg)
     printf("%s init: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
 
+#ifdef ABOCHARLIE
     communication com;
     ret = aboMsg(&com,3);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
+#endif // ABOCHARLIE
 
+#ifdef PICALC
 int i = 1;
     int j = 0;
     int mod = 0;
@@ -244,10 +293,11 @@ int i = 1;
         }while(ret != 0);
         somme = 0;
     }
-
+#endif // PICALC
+#ifdef ABOCHARLIE
     printf("desabo thread Chalie\n");;
-
     desaboMsg(&com);
+#endif // ABOCHARLIE
     pthread_exit(0);
 }
 
@@ -260,11 +310,14 @@ void * Dingo(void * arg)
     printf("%s init: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
 
+#ifdef ABODINGO
     communication com;
     ret = aboMsg(&com,4);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
+#endif // ABODINGO
+#ifdef PICALC
 int i = 1;
     int j = 0;
     int mod = 0;
@@ -311,8 +364,12 @@ int i = 1;
         }while(ret != 0);
         somme = 0;
     }
+
+#endif // PICALC
+#ifdef ABODINGO
     printf("desabo thread Dingo\n");;
     desaboMsg(&com);
+#endif // ABODINGO
     pthread_exit(0);
 }
 
