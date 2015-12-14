@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define pas 100000
+#define pas 1000
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
 "INIT_ERROR",
@@ -40,7 +40,7 @@ pthread_mutex_unlock(&mut_print);
     pthread_mutex_unlock(&mut_print);
     int it = 0;
     int a = 0;
-    double pi;
+    double pi = 0;
 
     a = it * pas;
     it++;
@@ -80,7 +80,9 @@ pthread_mutex_unlock(&mut_print);
             free(mymess);
         }
         usleep(100000);
+        pthread_mutex_lock(&mut_print);
         printf("pi = %lf\n",4*pi);
+        pthread_mutex_unlock(&mut_print);
         a = it * pas;
         it++;
         ret = 8;
@@ -149,7 +151,7 @@ void * Bob(void * arg)
         else
         {
         j = 0;
-        for(j=i+1; j< i + pas; j++)
+        for(j=i+1; j<= i + pas; j++)
             {
                 if (j%2){mod = 1;}
                 else{mod = -1;}
@@ -162,7 +164,9 @@ void * Bob(void * arg)
         ret = 8;
         while(ret != 0)
         {
+
         ret = sendMsg(&com,1,&somme, sizeof(somme));
+        if (ret ==  12){printf("messagerie pleine\n");}
         }
         somme = 0;
     }
@@ -208,7 +212,7 @@ int i = 1;
         else
         {
         j = 0;
-        for(j=i+1; j< i + pas; j++)
+        for(j=i+1; j<= i + pas; j++)
             {
                 if (j%2){mod = 1;}
                 else{mod = -1;}
@@ -221,7 +225,9 @@ int i = 1;
         ret = 8;
         while(ret != 0)
         {
+
         ret = sendMsg(&com,1,&somme, sizeof(somme));
+        if (ret ==  12){printf("messagerie pleine\n");}
         }
         somme = 0;
     }
@@ -267,7 +273,7 @@ int i = 1;
         else
         {
         j = 0;
-        for(j=i+1; j< i + pas; j++)
+        for(j=i+1; j<= i + pas; j++)
             {
                 if (j%2){mod = 1;}
                 else{mod = -1;}
@@ -281,6 +287,7 @@ int i = 1;
         while(ret != 0)
         {
         ret = sendMsg(&com,1,&somme, sizeof(somme));
+        if (ret ==  12){printf("messagerie pleine\n");}
         }
         somme = 0;
     }
