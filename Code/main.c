@@ -3,20 +3,22 @@
 #include "api_com.h"
 #include <unistd.h>
 #include <pthread.h>
+
 #define pas 10000
+#define nbiter 1000000
 
 #define LAUCHSERVICE
-//#define PICALC
+#define PICALC  // necessite ABOALICE ABOBOB ABOCHARLIE ABODINGO
 //#define TESTMAXABO
-//#define TESTSENDIFNOABO
+//#define TESTSEND
 //#define TESTSENDTOIDUKNOW
 #define ABOALICE
 #define ABOBOB
-//#define ABOCHARLIE
-//#define ABODINGO
+#define ABOCHARLIE
+#define ABODINGO
 //#define TESTGETNBMSG
 //#define TESTDESABO
-#define TESTDESABOWITHMSG // necessite ABOALICE ABOBOB
+//#define TESTDESABOWITHMSG // necessite ABOALICE ABOBOB
 
 
 char* corresp_errors[] = {"SUCCESS",
@@ -45,11 +47,7 @@ pthread_mutex_lock(&mut_print);
 printf("%s  init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 #endif // LAUCHSERVICE
-
 communication com;
-
-
-
 #ifdef ABOALICE
 ret = aboMsg(&com,1);
 pthread_mutex_lock(&mut_print);
@@ -73,13 +71,13 @@ printf("%s  desabo: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 #endif // TESTDESABO
 
-#ifdef TESTSENDIFNOABO
+#ifdef TESTSEND
 int a = 2;
 ret = sendMsg(&com,2,&a, sizeof(a));
 pthread_mutex_lock(&mut_print);
 printf("%s  send: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
-#endif // TESTSENDIFNOABO
+#endif // TESTSEND
 
 #ifdef TESTGETNBMSG
 int * nb;
@@ -136,7 +134,7 @@ pthread_mutex_unlock(&mut_print);
     ret = sendMsg(&com,4,&a, sizeof(a));
     }while(ret != 0);
 
-    while(a < 1000000)
+    while(a < nbiter)
     {
         int dest = 0;
         message * mymess;
@@ -158,7 +156,7 @@ pthread_mutex_unlock(&mut_print);
             mymess=NULL;
         }
         pthread_mutex_lock(&mut_print);
-        //printf("pi = %.10f\n",4*pi);
+        printf("pi = %.10f\n",4*pi);
         pthread_mutex_unlock(&mut_print);
         a = it * pas;
         it++;
