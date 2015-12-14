@@ -37,6 +37,7 @@ int handleRcv(messagerie * mess);
 int handleGetNbAbo(int nb_messageries);
 int handleGetNbMsg(messagerie * mess);
 int handleIsAbo(messagerie * tab, int * nb_messageries);
-int close_service(int flag);
+//int close_service(int flag);
+int close_service(int flag, messagerie * tab, int * nb_messageries);
 int handleDesabo(messagerie * tab, int * nb_messageries, int index_sender);
 #endif // TYPES_PRIVATE_H_INCLUDED

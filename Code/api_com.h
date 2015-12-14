@@ -30,7 +30,7 @@ int recvMsg(communication *, message **msg);
 int recvMsgBlock(communication *, message **msg);
 int getNbMsg(communication *, int* nb_msg);
 int desaboMsg(communication *);
-int finMsg();
+int finMsg(int force);
 
 typedef enum com_errors {
     SUCCESS,                //0

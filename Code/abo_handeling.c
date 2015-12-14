@@ -32,7 +32,7 @@ int aboMsg(communication * my_com, int id)
     printf("\n **** \n Le thread %zu à libérer le mutex_abo \n **** \n", pthread_self());
 #endif
     int abo_state = 0;
-    //isAbo(id,&abo_state);
+    isAbo(id,&abo_state);
     if(abo_state)
     {
         return ID_IN_USE;

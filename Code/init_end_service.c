@@ -82,7 +82,6 @@ int finMsg(int force)
     }
     my_com.retour = -1;
 
-
 pthread_mutex_lock(&_mutex_clients);
     pthread_mutex_lock(&_mutex_abo);
     fin = 1;
@@ -94,17 +93,15 @@ pthread_mutex_lock(&_mutex_clients);
     }
     _com_abo = NULL;
     int ret = my_com.retour;
-    my_com.operation = NO_OP;
     service_ready=0;
     pthread_mutex_unlock(&_mutex_abo);
-pthread_mutex_unlock(&_mutex_clients);
+
+    //pthread_join(*_thread_gest,NULL);
+    _thread_gest = NULL;
+    service_ready = 0;
+    fin = 0;
+
+    pthread_mutex_unlock(&_mutex_clients);
     return ret;                 //retourne le code renvoyé par le gestionnaire
 
-    ///TODO : pthread_join
-//pthread_join(*_thread_gest,NULL);
-    //int pj;
-   /* if(pthread_join(*_thread_gest,NULL))
-    {
-        return pj;
-    }*/
 }

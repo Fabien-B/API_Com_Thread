@@ -45,6 +45,12 @@ int handleAbo(messagerie * tab, int * nb_messageries)
 
 int handleDesabo(messagerie * tab, int * nb_messageries, int index_sender)
 {
+
+    if(*nb_messageries<=0)
+    {
+        return NO_ABO;
+    }
+
     if(tab[index_sender].first_letter != NULL)      //liberation des lettres
     {
         lettre * current_letter = tab[index_sender].first_letter;
