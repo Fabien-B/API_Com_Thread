@@ -50,17 +50,18 @@ int handleDesabo(messagerie * tab, int * nb_messageries, int index_sender)
         lettre * current_letter = tab[index_sender].first_letter;
         while(current_letter->next != NULL)   //recherche pointeur lettre suivant la dernière
         {
+            printf("free1\n");
             lettre * next_letter = current_letter->next;
             free(current_letter->mail);
             free(current_letter->next);
             free(current_letter);
             current_letter = next_letter;
         }
-            free(current_letter->mail);
-            free(current_letter->next);
-            free(current_letter);
+        printf("free2\n");
+        free(current_letter->mail);
+        free(current_letter->next);
+        free(current_letter);
     }
-
     int i;
     for(i=index_sender;i<*nb_messageries-1;i++)     //decalage des messageries suivantes
     {

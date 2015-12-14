@@ -61,7 +61,7 @@ pthread_mutex_unlock(&mut_print);
     ret = sendMsg(&com,4,&a, sizeof(a));
     }while(ret != 0);
 
-    while(a < 10000000)
+    while(a < 1000000)
     {
         int dest = 0;
         message * mymess;
@@ -82,9 +82,8 @@ pthread_mutex_unlock(&mut_print);
             }
             mymess=NULL;
         }
-        usleep(10000);
         pthread_mutex_lock(&mut_print);
-        printf("pi = %.10f\n",4*pi);
+        //printf("pi = %.10f\n",4*pi);
         pthread_mutex_unlock(&mut_print);
         a = it * pas;
         it++;
@@ -104,6 +103,12 @@ pthread_mutex_unlock(&mut_print);
     do{
     ret = sendMsg(&com,4,&a, sizeof(a));
     }while(ret != 0);
+    //usleep(50000);
+    do{
+    message * mymess;
+    ret = recvMsg(&com,&mymess);
+    }while(ret != NO_MSG);
+
 
     printf("desabo thread Alice\n");
     desaboMsg(&com);
@@ -239,6 +244,7 @@ int i = 1;
         }while(ret != 0);
         somme = 0;
     }
+
     printf("desabo thread Chalie\n");;
 
     desaboMsg(&com);
