@@ -1,7 +1,7 @@
 #ifndef TYPES_PRIVATE_H_INCLUDED
 #define TYPES_PRIVATE_H_INCLUDED
 #define NB_ABO_MAX 10
-#define NB_LETTER_MAX 1
+#define NB_LETTER_MAX 2
 #include "api_com.h"
 
 typedef struct lettre {

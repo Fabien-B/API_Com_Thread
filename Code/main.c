@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define pas 1000
+#define pas 10000
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
 "INIT_ERROR",
