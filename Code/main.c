@@ -3,16 +3,19 @@
 #include "api_com.h"
 #include <unistd.h>
 #include <pthread.h>
-
 #define pas 10000
 
+//#define LAUCHSERVICE
 //#define PICALC
 //#define TESTMAXABO
 //#define TESTSENDIFNOABO
 //#define TESTSENDTOIDUKNOW
+//#define ABOALICE
 //#define ABOBOB
 //#define ABOCHARLIE
 //#define ABODINGO
+//#define TESTGETNBMSG
+//#define TESTDESABO
 
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
@@ -34,12 +37,31 @@ void * Alice(void * arg)
 {
     char dec[]="";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
 pthread_mutex_lock(&mut_print);
 printf("%s  init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
 
 communication com;
+
+
+
+#ifdef ABOALICE
+ret = aboMsg(&com,1);
+pthread_mutex_lock(&mut_print);
+printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // ABOALICE
+
+#ifdef TESTDESABO
+ret = desaboMsg(&com);
+pthread_mutex_lock(&mut_print);
+printf("%s  desabo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTDESABO
+
 #ifdef TESTSENDIFNOABO
 int a = 2;
 ret = sendMsg(&com,2,&a, sizeof(a));
@@ -48,11 +70,13 @@ printf("%s  send: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
 #endif // TESTSENDIFNOABO
 
-
-ret = aboMsg(&com,1);
+#ifdef TESTGETNBMSG
+int * nb;
+ret = getNbMsg(&com, &nb);
 pthread_mutex_lock(&mut_print);
-printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+printf("%s  nbabo: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
+#endif // TESTGETNBMSG
 
 
 #ifdef TESTSENDTOIDUKNOW
@@ -150,9 +174,10 @@ pthread_mutex_unlock(&mut_print);
     }while(ret != NO_MSG);
 
 #endif // PICALC
-
+#ifdef ABOALICE
     printf("desabo thread Alice\n");
     desaboMsg(&com);
+#endif // ABOALICE
     pthread_exit(0);
 }
 
@@ -160,10 +185,12 @@ void * Bob(void * arg)
 {
     char dec[]="\t\t";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
-    pthread_mutex_lock(&mut_print);
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
+pthread_mutex_lock(&mut_print);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
 
 #ifdef ABOBOB
     communication com;
@@ -233,11 +260,12 @@ void * Charlie(void * arg)
 {
     char dec[]="\t\t\t\t";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
-    pthread_mutex_lock(&mut_print);
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
-
+pthread_mutex_lock(&mut_print);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
 #ifdef ABOCHARLIE
     communication com;
     ret = aboMsg(&com,3);
@@ -305,10 +333,12 @@ void * Dingo(void * arg)
 {
     char dec[]="\t\t\t\t\t\t";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
-    pthread_mutex_lock(&mut_print);
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
+pthread_mutex_lock(&mut_print);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
 
 #ifdef ABODINGO
     communication com;
