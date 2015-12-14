@@ -62,11 +62,10 @@ int handleDesabo(messagerie * tab, int * nb_messageries, int index_sender)
             free(current_letter);
             current_letter = next_letter;
         }
-            free(current_letter->mail);
-            free(current_letter->next);
-            free(current_letter);
+        free(current_letter->mail);
+        free(current_letter->next);
+        free(current_letter);
     }
-
     int i;
     for(i=index_sender;i<*nb_messageries-1;i++)     //decalage des messageries suivantes
     {

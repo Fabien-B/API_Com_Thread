@@ -5,6 +5,22 @@
 #include <pthread.h>
 
 #define pas 10000
+#define nbiter 1000000
+
+#define LAUCHSERVICE
+#define PICALC  // necessite ABOALICE ABOBOB ABOCHARLIE ABODINGO
+//#define TESTMAXABO
+//#define TESTSEND
+//#define TESTSENDTOIDUKNOW
+#define ABOALICE
+#define ABOBOB
+#define ABOCHARLIE
+#define ABODINGO
+//#define TESTGETNBMSG
+//#define TESTDESABO
+//#define TESTDESABOWITHMSG // necessite ABOALICE ABOBOB
+
+
 char* corresp_errors[] = {"SUCCESS",
 "ALREADY_LAUNCH",
 "INIT_ERROR",
@@ -25,92 +41,152 @@ void * Alice(void * arg)
 {
     char dec[]="";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
 pthread_mutex_lock(&mut_print);
 printf("%s  init: %s\n",dec,corresp_errors[ret]);
 pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
+communication com;
+#ifdef ABOALICE
+ret = aboMsg(&com,1);
+pthread_mutex_lock(&mut_print);
+printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // ABOALICE
 
-    int res;
-    isAbo(5,&res);
+#ifdef TESTDESABOWITHMSG
+//int * nbmsg;
+//do{
+//ret = getNbMsg(&com, &nbmsg);
+//}while(*nbmsg == 0);
+sleep(5);
 
-    communication com;
-    ret = aboMsg(&com,1);
-    pthread_mutex_lock(&mut_print);
-    printf("%s  abo: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
+#endif // TESTDESABOWITHMSG
+
+#ifdef TESTDESABO
+ret = desaboMsg(&com);
+pthread_mutex_lock(&mut_print);
+printf("%s  desabo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTDESABO
+
+#ifdef TESTSEND
+int a = 2;
+ret = sendMsg(&com,2,&a, sizeof(a));
+pthread_mutex_lock(&mut_print);
+printf("%s  send: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTSEND
+
+#ifdef TESTGETNBMSG
+int * nb;
+ret = getNbMsg(&com, &nb);
+pthread_mutex_lock(&mut_print);
+printf("%s  nbabo: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTGETNBMSG
+
+
+#ifdef TESTSENDTOIDUKNOW
+ret = sendMsg(&com,1000,&a, sizeof(a));
+pthread_mutex_lock(&mut_print);
+printf("%s  send: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // TESTSENDTOIDUKNOW
+
+
+#ifdef TESTMAXABO
+    int i =0;
+    communication com[20];
+    for(i=0;i<20;i++)
+    {
+        ret = aboMsg(&com[i],i);
+        pthread_mutex_lock(&mut_print);
+        printf("%s  abo: %s\n",dec,corresp_errors[ret]);
+        pthread_mutex_unlock(&mut_print);
+    }
+#endif // TESTMAXABO
+
+
+
+#ifdef PICALC
     int it = 0;
     int a = 0;
     double pi = 0;
 
     a = it * pas;
     it++;
-    ret = 8;
-    while(ret == 8)
-    {
+
+    do{
     ret = sendMsg(&com,2,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
     a = it * pas;
     it++;
-    ret = 8;
-    while(ret == 8)
-    {
+    do{
     ret = sendMsg(&com,3,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
     a = it * pas;
     it++;
-    ret = 8;
-    while(ret == 8)
-    {
+    do{
     ret = sendMsg(&com,4,&a, sizeof(a));
-    }
+    }while(ret != 0);
 
-    while(a < 10000000)
+    while(a < nbiter)
     {
         int dest = 0;
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {   double * somme = 0;
-            somme = mymess->contenu;
-            pi += *somme;
-            dest = mymess->expid;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+            {
+                somme = mymess->contenu;
+                if (somme != NULL)
+                {
+                pi += *somme;
+                dest = mymess->expid;
+                free(mymess->contenu);
+                free(mymess);
+                }
+
+            }
+            mymess=NULL;
         }
-        usleep(10000);
         pthread_mutex_lock(&mut_print);
         printf("pi = %.10f\n",4*pi);
         pthread_mutex_unlock(&mut_print);
         a = it * pas;
         it++;
-        ret = 8;
-        while(ret == 8)
-        {
+        do{
             ret = sendMsg(&com,dest,&a, sizeof(a));
-        }
+        }while(ret != 0);
 
     }
+    printf("\n\t*********** \nCalcul terminé Pi=%.10f\n\n",4*pi);
     a = -1;
-    ret = 8;
-    while(ret == 8)
-    {
+    do{
     ret = sendMsg(&com,2,&a, sizeof(a));
-    }
-    ret = 8;
-    while(ret == 8)
-    {
+    }while(ret != 0);
+    do{
     ret = sendMsg(&com,3,&a, sizeof(a));
-    }
-    ret = 8;
-    while(ret == 8)
-    {
+    }while(ret != 0);
+    do{
     ret = sendMsg(&com,4,&a, sizeof(a));
-    }
+    }while(ret != 0);
+    //usleep(50000);
+    do{
+    message * mymess;
+    ret = recvMsg(&com,&mymess);
+    }while(ret != NO_MSG);
 
+#endif // PICALC
+#ifdef ABOALICE
     printf("desabo thread Alice\n");
     desaboMsg(&com);
+#endif // ABOALICE
     pthread_exit(0);
 }
 
@@ -118,17 +194,32 @@ void * Bob(void * arg)
 {
     char dec[]="\t\t";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
-    pthread_mutex_lock(&mut_print);
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
+pthread_mutex_lock(&mut_print);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
 
+#ifdef ABOBOB
     communication com;
     ret = aboMsg(&com,2);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
+#endif // ABOBOB
 
+#ifdef TESTDESABOWITHMSG
+int a = 10;
+do{
+    ret = sendMsg(&com,2,&a, sizeof(a));
+    pthread_mutex_lock(&mut_print);
+    printf("%s send: %s\n",dec,corresp_errors[ret]);
+    pthread_mutex_unlock(&mut_print);
+}while(ret != INBOX_FULL);
+#endif // TESTDESABOWITHMSG
+
+#ifdef PICALC
     int i = 1;
     int j = 0;
     int mod = 0;
@@ -139,12 +230,20 @@ void * Bob(void * arg)
     {
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {
-            int* aq = mymess->contenu;
-            i = *aq;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+                {
+                    int* aq = mymess->contenu;
+                    if(aq !=NULL)
+                    {
+                        i = *aq;
+                        free(mymess->contenu);
+                        free(mymess);
+                    }
+
+                }
+                mymess=NULL;
         }
 
         if(i == -1){break;}
@@ -161,35 +260,41 @@ void * Bob(void * arg)
                 somme = somme + val;
             }
         }
-        ret = 8;
-        while(ret != 0)
+        do
         {
-
         ret = sendMsg(&com,1,&somme, sizeof(somme));
         if (ret ==  12){printf("messagerie pleine\n");}
-        }
+        }while(ret != 0);
+
         somme = 0;
     }
+#endif // PICALC
+#ifdef ABOBOB
     printf("desabo thread Bob\n");
     desaboMsg(&com);
     pthread_exit(0);
+#endif // ABOBOB
 }
 
 void * Charlie(void * arg)
 {
     char dec[]="\t\t\t\t";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
-    pthread_mutex_lock(&mut_print);
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
-
+pthread_mutex_lock(&mut_print);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
+#ifdef ABOCHARLIE
     communication com;
     ret = aboMsg(&com,3);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
+#endif // ABOCHARLIE
 
+#ifdef PICALC
 int i = 1;
     int j = 0;
     int mod = 0;
@@ -200,12 +305,19 @@ int i = 1;
     {
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {
-            int* aq = mymess->contenu;
-            i = *aq;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+                {
+                    int* aq = mymess->contenu;
+                    if(aq !=NULL)
+                    {
+                        i = *aq;
+                        free(mymess->contenu);
+                        free(mymess);
+                    }
+                }
+                mymess=NULL;
         }
 
         if(i == -1){break;}
@@ -223,17 +335,17 @@ int i = 1;
             }
         }
         ret = 8;
-        while(ret != 0)
-        {
-
+        do{
         ret = sendMsg(&com,1,&somme, sizeof(somme));
         if (ret ==  12){printf("messagerie pleine\n");}
-        }
+        }while(ret != 0);
         somme = 0;
     }
+#endif // PICALC
+#ifdef ABOCHARLIE
     printf("desabo thread Chalie\n");;
-
     desaboMsg(&com);
+#endif // ABOCHARLIE
     pthread_exit(0);
 }
 
@@ -241,16 +353,21 @@ void * Dingo(void * arg)
 {
     char dec[]="\t\t\t\t\t\t";
     int ret;
+#ifdef LAUCHSERVICE
     ret = initMsg();
-    pthread_mutex_lock(&mut_print);
-    printf("%s init: %s\n",dec,corresp_errors[ret]);
-    pthread_mutex_unlock(&mut_print);
+pthread_mutex_lock(&mut_print);
+printf("%s  init: %s\n",dec,corresp_errors[ret]);
+pthread_mutex_unlock(&mut_print);
+#endif // LAUCHSERVICE
 
+#ifdef ABODINGO
     communication com;
     ret = aboMsg(&com,4);
     pthread_mutex_lock(&mut_print);
     printf("%s abo: %s\n",dec,corresp_errors[ret]);
     pthread_mutex_unlock(&mut_print);
+#endif // ABODINGO
+#ifdef PICALC
 int i = 1;
     int j = 0;
     int mod = 0;
@@ -261,12 +378,20 @@ int i = 1;
     {
         message * mymess;
         ret = recvMsgBlock(&com,&mymess);
-        if(ret==0)
+        if(ret==SUCCESS)
         {
-            int* aq = mymess->contenu;
-            i = *aq;
-            free(mymess->contenu);
-            free(mymess);
+            if(mymess != NULL)
+                {
+                    int* aq = mymess->contenu;
+                    if(aq !=NULL)
+                    {
+                        i = *aq;
+                        free(mymess->contenu);
+                        free(mymess);
+                    }
+
+                }
+                mymess=NULL;
         }
 
         if(i == -1){break;}
@@ -283,16 +408,18 @@ int i = 1;
                 somme = somme + val;
             }
         }
-        ret = 8;
-        while(ret != 0)
-        {
+        do{
         ret = sendMsg(&com,1,&somme, sizeof(somme));
         if (ret ==  12){printf("messagerie pleine\n");}
-        }
+        }while(ret != 0);
         somme = 0;
     }
+
+#endif // PICALC
+#ifdef ABODINGO
     printf("desabo thread Dingo\n");;
     desaboMsg(&com);
+#endif // ABODINGO
     pthread_exit(0);
 }
 
@@ -384,12 +511,13 @@ int main()
     message * mymess;
     ret = recvMsg(&com3,&mymess);
     printf("recv : %d\n", ret);
-    if(ret==0)
+    if(ret==SUCCES)
     {
         int* aq = mymess->contenu;
         printf("message: %d     recu a %ld\n",*aq,mymess->tv.tv_sec);
         free(mymess->contenu);
         free(mymess);
+		mymess=NULL;
     }
 
 	//reception du nombre de message dans notre messagerie
@@ -402,7 +530,7 @@ int main()
     message * mymess2 = NULL;
     ret = recvMsg(&com3,&mymess2);
     printf("recv : %d\n", ret);
-    if(ret==0)
+    if(ret==SUCCES)
     {
         char * chaine = mymess2->contenu;
         printf("message: %s    reçu à %ld\n",chaine,mymess2->tv.tv_sec);

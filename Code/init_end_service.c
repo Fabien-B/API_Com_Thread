@@ -10,7 +10,6 @@
 int initMsg()
 {
     pthread_mutex_lock(&_mutex_abo);
-    int* serv_ready = &service_ready;
 
     if(_thread_gest != NULL) // != NULL : déja lancé
     {

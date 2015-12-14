@@ -111,7 +111,7 @@ int recvMsgBlock(communication * mycom, message **msg)
     do
     {
         ret = recvMsg(mycom,msg);
-
+        usleep(5000);
     }while(ret == NO_MSG);
 
     return ret;
@@ -143,6 +143,11 @@ int handleSend(messagerie * tab, int nb_messageries, int id_sender)
         new_letter = malloc(sizeof(lettre));
         if(new_letter == NULL)          //vérification de la bonne marche du malloc
         {
+            return TECH_ERROR;
+        }
+        if(mess_to_send->contenu == NULL)
+        {
+            printf("no content\n");
             return TECH_ERROR;
         }
         new_letter->mail = mess_to_send;    //mémorisation du message
